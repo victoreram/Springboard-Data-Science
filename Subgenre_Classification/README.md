@@ -15,3 +15,4 @@ The data in this repo is divided into two sets:
 - fma_EDA.ipynb: EDA for each spreadsheet in the dataset. 
 - csv_cleaning.ipynb: Cleans up tracks.csv and echonest.csv into a smaller subset of data.
 - Merging_dfs.ipynb: Notebook that merges cleaned up spreadsheets from csv_cleaning into a unified dataframe and csv file.
+- feature_distribution.ipynb: Examines the relationship of audio features amongst each other and by genre
