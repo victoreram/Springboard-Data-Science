@@ -44,7 +44,7 @@ def update_plot(attr, old, new):
     p.title.text = '{} vs. {}'.format(y,x)
 
 # Read track info
-df = pd.read_csv('tracks_supervised.csv', index_col='track_id')
+df = pd.read_csv('tracks_cleaned.csv', index_col='track_id')
 df['genres_all'] = df['genres_all'].map(ast.literal_eval)
 df['genres_all'].apply(lambda row : ', '.join(map(str, row)))
 df['tempo'] /= df['tempo'].max()
