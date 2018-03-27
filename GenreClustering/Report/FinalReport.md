@@ -69,5 +69,41 @@ The code is written in the notebook above. Here is a short summary of some of th
 - Merge tracks and echonest audio features together into one cohesive .csv, `tracks_cleaned.csv`. This new .csv file contains 13129 rows and 18 columns. 8 of these columns are audio files, while the rest are metadata (track, artist, album, genre, year released).
 
 ## Further Data Analysis: Feature Distribution
+### Definition of Features
+To better understand what the genres are clustered by, audio features must first be defined. These are taken from Spotify's site: https://developer.spotify.com/web-api/get-audio-features/
+
+- **acousticness:** A confidence measure from 0.0 to 1.0 of whether the track is acoustic. 1.0 represents high confidence the track is acoustic.
+- **danceability:** Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity. A value of 0.0 is least danceable and 1.0 is most danceable.
+- **Energy** is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy.
+- **instrumentalness:** Predicts whether a track contains no vocals. "Ooh" and "aah" sounds are treated as instrumental in this context. Rap or spoken word tracks are clearly "vocal". The closer the instrumentalness value is to 1.0, the greater likelihood the track contains no vocal content. Values above 0.5 are intended to represent instrumental tracks, but confidence is higher as the value approaches 1.0.
+- **liveness:** Detects the presence of an audience in the recording. Higher liveness values represent an increased probability that the track was performed live. A value above 0.8 provides strong likelihood that the track is live.
+- **speechiness:** Speechiness detects the presence of spoken words in a track. The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value. Values above 0.66 describe tracks that are probably made entirely of spoken words. Values between 0.33 and 0.66 describe tracks that may contain both music and speech, either in sections or layered, including such cases as rap music. Values below 0.33 most likely represent music and other non-speech-like tracks.
+- **tempo:** The overall estimated tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration. The value here is normalized so the max value = 1
+- **valence:** A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).
+
+### Boxplots of Audio Features
+![Boxplots of Feature Distribution By Genre]()
+#### Remarks
+- **Acousticness**:
+    - Metal typically scores low even though the music is heavily reliant on stringed instruments (guitars and bass). This outlines another possible feature that could be useful if extracted: distortion.
+    - Folk's distribution is centered towards high acousticness scores (not surprising) but has plenty of outliers that score low.
+    - Rock's distribution spans through a large chunk of the available range.
+- **Danceability**:
+    - For the most part, each genre centers around medium values for danceability.
+- **Energy**:
+    - Folk's distribution contrasts how it score in acousticness, visibly clustering at lower values than other genres. This is partly
+- **Instrumentalness**:
+    - The distribution for Metal and Electronic are eerily similar, scoring high in instrumentalness with plenty of outliers at low values. 
+    - Metal, Folk, Electronic, and Rock all have lower quartiles that extend far past the mean relative to the upper quartile. One way to interpret this is that songs in these genres typically have strong instrumental sounds, but there's a significant minority of songs within these genres where instrumentals are much less prominent. 
+- **Liveness**:
+    - Plenty of outliers all around. This is a weird audio feature that is track-specific, signifying if the track sounds like it's live or not. There isn't much insight on a per-genre basis because this is dependent on the sample of tracks that happen to be live given a genre.
+- **Speechiness**:
+    - To nobody's surprise, A genre that is mostly centered around vocals (Hip-Hop) vastly outscore all genres in speechiness.
+    - Other genres typically score low but have plenty of outliers outside of its upper quartiles.
+- **Tempo**:
+    - Each genre seems to share roughly the same distribution here, with some outliers with high tempos. I'm willing to bet those Rock outliers are actually Punk songs.
+- **Valence**:
+    - Hip-Hop takes the honor for happiest genre of this sample. 
+    - Metal on the other hand is the saddest / angriest genre of the sample, though there are some outliers that score extremely high. 
 
 ## Machine Learning
