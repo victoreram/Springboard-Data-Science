@@ -26,14 +26,20 @@ The data is originally sourced from the Free Music Archive. Repo [here](https://
 The first aspect of this project I decided to explore was the amount of tracks that were categorized by genre. Note that this was initially done using `tracks.csv` from FMA. The `tracks_cleaned.csv` has a similar structure and was cleaned after knowing some features outlined by this step.
 
 #### All Genres
+
+[Histogram of all genres](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/hist_genres.png)
 The histogram above shows that that the music sampled by this dataset has an imbalanced proportion of tracks by genre. The sample is mostly composed of 3 genres: Experimental, Electronic, and Rock, which more than make up the remaining 14 genres. Samples of top genres were taken later on to give an estimated "fair" distribution of features later on. It is worth noting that this is not necessarily a fault of the dataset. Some genres are more popular than others, so it's natural to assume that some genres will have more songs than others.
 
 #### Subgenre: Rock
+[Histogram of Rock](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/hist_rock.png)
 When examining the subgenres that compose Rock, I used genres that are direct "children" of rock (see description of `genres.csv` above). Rock has many other subgenres outlined in this dataset, but those are absorbed by the hierarchy level right below Rock. 
 
 The histogram above shows roughly the same Pareto distribution for subgenres as the genres. Punk has the most instances near 10,000 which is roughly 30% of the total instances of Rock. The 2nd most (Lo-Fi) has 2/3 of that amount. There's a healthy enough sample size for the 10 subgenres that it's still possible to see some meaningful disparities between subgenres. 
 
 ### Tracks by Year
+[Tracks by Year Released Histogram](https://github.com/victoreram/Springboard-Data-Science/blob/master/GenreClustering/Report/hist_times.png?raw=true)
+[Tracks by Year Released Chronologically](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/tracks_release_years.png)
+
 One of the original considerations when separating genres by audio features is to look at when a song is released. After all, some songs and genres are characterized heavily by the times they were released; Rock from the 70's is notably distinct from Rock from the 80's, which are both much different than Indie Rock released in the 2010's. The factors that cause these disparities, whether they be cultural or technology, could in theory be captured by the audio features. In order to prove this hypothesis, one would need a healthy amount of data released over time. 
 
 Unfortunately as we see above, most of the tracks in this dataset are released within the last 2 decades with a lot of them unknown. Thus, any insights from differentiating by decade released may not be all that meaningful. 
