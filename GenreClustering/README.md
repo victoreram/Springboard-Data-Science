@@ -3,7 +3,7 @@
 ## Data
 Free Music Archive. Repo [here](https://github.com/mdeff/fma/)
 The data in this repo is divided into two sets:
-- tracks_cleaneded.csv: Contains audio features of 13129 tracks, cleaned up from tracks.csv and echonest.csv from the fma repo using DataCleaning.ipynb.  
+- tracks_cleaned.csv: Contains audio features of 13129 tracks, cleaned up from tracks.csv and echonest.csv from the fma repo using DataCleaning.ipynb.  
 
 ## Documentation
 - Proposal.md: The formal proposal for this project.
