@@ -161,6 +161,18 @@ print("### Which genre corresponds to the most instances per cluster? ###")
 print(tracks[['genres_top', 'KMeansLabel']].groupby('KMeansLabel').agg(lambda x:x.value_counts().index[0]))
 ```
 ```
+### Instances of KMeans Cluster ###
+                                   genres_top
+KMeansLabel                                  
+Fast & Danceable Instrumentals           1071
+Fast, Upbeat & Cheerful Songs            1382
+Happy & Danceable Instrumentals          1733
+Happy & Slow                             1930
+Happy & Upbeat Instrumentals             1435
+Sad Instrumentals                        1557
+Slow & Somber Acoustics                  1983
+Slow Dance                                893
+Upbeat Songs With Cheerful Vocals        1145
 ### Which cluster corresponds to the most instances per genre? ###
                                                        KMeansLabel
 genres_top                                                        
@@ -200,6 +212,82 @@ The reduced dimensional space showed some well-defined clusters from genres. Fol
 We use the same techniques again, this time only examining the top 5 most prevalent Rock subgenres as our genres. 
 
 #### Rock Subgenre Cluster Meanings
-![K-Means heatmap](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/KM_heatmap.png)
+![K-Means heatmap for rock](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/Rock_heatmap.png)
+My best guess interpretations are:
+- **KM0**: High Energy, Valence, Tempo, Danceablity. Low acousticness, instrumentalness. Probably just described Pop. "Upbeat Rock with Synths to Dance to"
+- **KM1**: High Acousticness and Instrumentalness. Not Danceable. Low Speechiness, Tempo, and Valence. "Slow & Depressing Rock"
+- **KM2**: High Acousticness, Instrumentalness and Valence. Lowest Speechiness and Tempo. "Slow & Cheerful Rock"
+- **KM3**: High Acousticness and Danceability. Low Energy. "Slow Dance Rock"
+- **KM4**: High Instrumentalness, Tempo and Energy. Low Acousticness, Danceability. "Fast & Energetic Rock"
 
+Again, tallying up the instances from both subgenres and K-Means clusters yields the following pairings:
+```
+### Assign K-Means Label to Descriptive Labels
+descriptive_labels = ["Upbeat Rock with Synths to Dance to", "Slow & Depressing Rock", "Slow & Cheerful Rock",
+                     "Slow Dance Rock", "Fast & Energetic Rock"]
+unique_labels = np.unique(rock_tracks["KMeansLabel"].values)
+translated_labels = dict(zip(unique_labels, descriptive_labels))
+rock_tracks['KMeansLabel'] = list(map(lambda x:translated_labels[x], (rock_tracks["KMeansLabel"].values)))
+
+genre_count = rock_tracks.groupby('subgenre').agg({'subgenre':'count'})['subgenre']
+
+# How many instances of each subgenre of rock are there?
+print("### Instances of subgenre ###")
+print(rock_tracks[['subgenre', 'KMeansLabel']].groupby('subgenre').agg('count'))
+
+# How many instances of each k-means cluster are there?
+print("### Instances of KMeans Cluster ###")
+print(rock_tracks[['subgenre', 'KMeansLabel']].groupby('KMeansLabel').agg('count'))
+
+# Which cluster corresponds to the most instances per genre?
+print("### Which cluster corresponds to the most instances per genre? ###")
+print(rock_tracks[['subgenre', 'KMeansLabel']].groupby('subgenre').agg(lambda x:x.value_counts().index[0]))
+
+# Which genre corresponds to the most instances per cluster?
+print("### Which genre corresponds to the most instances per cluster? ###")
+print(rock_tracks[['subgenre', 'KMeansLabel']].groupby('KMeansLabel').agg(lambda x:x.value_counts().index[0]))
+```
+```
+### Instances of subgenre ###
+            KMeansLabel
+subgenre               
+Indie-Rock          730
+Pop                 400
+Psych-Rock          447
+Punk               1474
+Rock               1790
+### Instances of KMeans Cluster ###
+                                     subgenre
+KMeansLabel                                  
+Fast & Energetic Rock                     734
+Slow & Cheerful Rock                     1157
+Slow & Depressing Rock                   1106
+Slow Dance Rock                           526
+Upbeat Rock with Synths to Dance to      1318
+### Which cluster corresponds to the most instances per genre? ###
+                                    KMeansLabel
+subgenre                                       
+Indie-Rock               Slow & Depressing Rock
+Pop         Upbeat Rock with Synths to Dance to
+Psych-Rock                 Slow & Cheerful Rock
+Punk        Upbeat Rock with Synths to Dance to
+Rock        Upbeat Rock with Synths to Dance to
+### Which genre corresponds to the most instances per cluster? ###
+                                    subgenre
+KMeansLabel                                 
+Fast & Energetic Rock                   Punk
+Slow & Cheerful Rock                    Rock
+Slow & Depressing Rock                  Rock
+Slow Dance Rock                         Rock
+Upbeat Rock with Synths to Dance to     Rock
+```
+More interesting and intuitive conclusions can be made from the cluster groupings.
+
+- In cell 2, Psych-Rock mostly fell under the Slow & Depressing Rock cluster which is on point. Punk tends to be fast & energetic subset of rock as well, but Pop and "Plain" Rock also fall under the same cluster. Indie Rock does tend to be slower, but is differentiated by Psych Rock with its mood.
+
+- In cell 3, we see that 4 out of 5 KMeans Labels are dominated by Rock. This is partially due to the imbalanced sampling of plain Rock, which takes up over a third of the dataset. Fast & Energetic Rock is dominated by Punk, matching the intuition behind the typical features of punk.
+
+The reduced dimensional space is represented below. 
+
+![](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/subgenreClustering.png)
 ## Conclusion
