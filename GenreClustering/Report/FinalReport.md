@@ -124,10 +124,10 @@ The last step in this project is the application of clustering algorithms on our
 ### All tracks
  Once applying this model I got clusters with the following centroid features:
 
-![K-Means heatmap]()
+![K-Means heatmap](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/KM_heatmap.png)
 
-#### Cluster Meanings
-One of the main purposes of this project is to see if clustering provides any sort of meaning behind any existing structure within the data. Given the cluster centroids from K-means, we can see the values which characterize each K-Means Label. From eyeballing the values and heatmap, I can describe these clusters based on the meaning behind each feature. In quotes are best-guess interpretations for these genres, meant to resemble Netflix's disturbingly specific genres. Someone with a wider music vocabulary can easily think up of better genre names.  
+#### Genre Cluster Meanings
+One of the main purposes of this project is to see if clustering provides any sort of meaning behind any existing structure within the data. Given the cluster centroids from K-Means, we can see the values which characterize each K-Means Label. From eyeballing the values and heatmap, I can describe these clusters based on the meaning behind each feature. In quotes are best-guess interpretations for these genres, meant to resemble Netflix's disturbingly specific genres. Someone with a wider music vocabulary can easily think up of better genre names.  
 - **KM0**: Highly acoustic and instrumental. Low danceability, energy tempo, valence. "Slow & Somber Acoustics"
 - **KM1**: Highly instrumental and valent. Mid-tempo, mid-energy. Low acousticness and speechiness. "Happy & Danceable Instrumentals"
 - **KM2**: Highly instrumental. Mid acousticness. Low valence, speechiness. "Sad Instrumentals"
@@ -186,5 +186,20 @@ Slow & Somber Acoustics                            Folk/Blues
 Slow Dance                                         Folk/Blues
 Upbeat Songs With Cheerful Vocals  Rock/Instrumental/Soul-RnB
 ```
+There are some interesting conclusions that match up with everyday musical intuition.
+
+- In cell 2, The most predominant KMeans Label for Classical, Folk/Blues, and Jazz are Slow & Somber Acoustics. In contrast, the most predominant KMeans Label for Electronic, Pop, and Country are Upbeat Songs With Cheerful Songs, which make sense. Metal's most predominant KMeans Label is Happy & Upbeat Instrumentals, which may indicate an unfortunately high amount of power metal in our sample.
+
+- In cell 3, we see Rock/Instrumental/Soul-RnB dominate 4 out of 5 "Happy/Cheerful" KMeans Labels. Folk/Blues, which tends to be slower, does end up categorized as typically slow.
+
+We can also visually represent where the genres lie by applying PCA to reduce our data to 2-D. 
+![PCA Scatter Plot](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/pca_scatter.png)
+The reduced dimensional space showed some well-defined clusters from genres. Folk/Blues, Classical and Old-Time clustered together towards strong acoustic values and weak energy values. Metal seemed to straddle along the instrumentalness axis but skewed towards higher energy values. 
+
+### Rock
+We use the same techniques again, this time only examining the top 5 most prevalent Rock subgenres as our genres. 
+
+#### Rock Subgenre Cluster Meanings
+![K-Means heatmap](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/KM_heatmap.png)
 
 ## Conclusion
