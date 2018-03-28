@@ -204,9 +204,11 @@ There are some interesting conclusions that match up with everyday musical intui
 
 - In cell 3, we see Rock/Instrumental/Soul-RnB dominate 4 out of 5 "Happy/Cheerful" KMeans Labels. Folk/Blues, which tends to be slower, does end up categorized as typically slow.
 
-We can also visually represent where the genres lie by applying PCA to reduce our data to 2-D. 
+We can also visually represent where the genres lie by applying PCA to reduce our data to 2-D. First, here is the 2-D space containing just the genres. 
 ![PCA Scatter Plot](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/pca_scatter.png)
-The reduced dimensional space showed some well-defined clusters from genres. Folk/Blues, Classical and Old-Time clustered together towards strong acoustic values and weak energy values. Metal seemed to straddle along the instrumentalness axis but skewed towards higher energy values. 
+The reduced dimensional space showed some well-defined clusters from genres. Folk/Blues, Classical and Old-Time clustered together towards strong acoustic values and weak energy values. Metal seemed to straddle along the instrumentalness axis but skewed towards higher energy values. Compare this to the space where points are instead clustered by their KMeans label:
+![PCA K-Means All Genres Plot](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/KMeans_all.png)
+K-Means labels crossed genre boundaries with few exceptions. Perhaps the most striking compatibility between labels is Metal - "Happy & Upbeat Instrumentals" straddling along the top left edge. Another one is Classical with "Slow & Somber Acoustics". 
 
 ### Rock
 We use the same techniques again, this time only examining the top 5 most prevalent Rock subgenres as our genres. 
@@ -287,7 +289,20 @@ More interesting and intuitive conclusions can be made from the cluster grouping
 
 - In cell 3, we see that 4 out of 5 KMeans Labels are dominated by Rock. This is partially due to the imbalanced sampling of plain Rock, which takes up over a third of the dataset. Fast & Energetic Rock is dominated by Punk, matching the intuition behind the typical features of punk.
 
-The reduced dimensional space is represented below. 
+The reduced dimensional space for just the subgenres is represented below. 
 
-![](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/subgenreClustering.png)
+![subgenre PCA](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/subgenreClustering.png)
+The subgenres within Rock show even less structure than all genres. The only decipherable subgenre is Psych-Rock straddling along the bottom left edge. The K-Means model shows more bounded structures:
+![subgenre PCA KMeans](https://github.com/victoreram/Springboard-Data-Science/blob/master/GenreClustering/Report/KMeansClustering.png)
+These clusters did capture some similarities. "Slow & Depressing Rock" managed to capture some Psych-Rock. "Slow & Cheerful Rock" captures some Indie-Rock as well. 
 ## Conclusion
+
+### Intuitive Pairings
+The clusters from the features do suggest interesting and intuitive relationships between genres as well. For example, a punk fan will agree that punk tends to be fast and energetic, and a psych-rock fan will agree that psych-rock is slow and depressing. These pairings allow for a baseline with which to compare clusters of audio features. 
+
+### Genre Clustering Shows Structure Differently Than Genres Themselves
+Due to the subjective nature of clustering, and the variable nature of music, it's difficult to decisively grade the model's performance. Various clustering algorithms were able to find structure, just not the same messy structure that is estimated by our subjective listening experience. However, this makes for interesting cross-genre similarities. A user who listens to mostly, say Classical, may discover Folk/Blues songs he/she likes that otherwise wouldn't be discovered if music recommendation engines drew the line within boundaries.  Where songs are divided into genres, audio feature groupings tend to cross. 
+
+### The Power of Genres and What Defines Them
+This model showed that while genre definitions can be messy, there are tangible features that define them. As mentioned in the introduction, the purpose of this project was not to rewrite genre boundaries, but to find crossings among them based on similarities. Using underlying audio features, it was shown that common features did cross among genres, suggesting a potentially powerful piece that can be applied to a music recommendation engine. 
+
