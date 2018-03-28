@@ -68,8 +68,8 @@ The code is written in the notebook above. Here is a short summary of some of th
 - Extract only the tracks with the basic "Spotify" audio features from echonest.
 - Merge tracks and echonest audio features together into one cohesive .csv, `tracks_cleaned.csv`. This new .csv file contains 13129 rows and 18 columns. 8 of these columns are audio files, while the rest are metadata (track, artist, album, genre, year released).
 
-## Further Data Analysis: Feature Distribution
-### Definition of Features
+## Further Data Analysis: [Feature Distribution](https://github.com/victoreram/Springboard-Data-Science/blob/master/GenreClustering/FeatureDistribution.ipynb)
+### Definition of Audio Features
 To better understand what the genres are clustered by, audio features must first be defined. These are taken from Spotify's site: https://developer.spotify.com/web-api/get-audio-features/
 
 - **acousticness:** A confidence measure from 0.0 to 1.0 of whether the track is acoustic. 1.0 represents high confidence the track is acoustic.
@@ -81,7 +81,15 @@ To better understand what the genres are clustered by, audio features must first
 - **tempo:** The overall estimated tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration. The value here is normalized so the max value = 1
 - **valence:** A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).
 
+### Relationships Between Audio Features
+![Heatmap of Audio Features](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/audio_heatmap.png)
+Given the definitions of these features, it's worthwhile to examine how each of them relate to one another. The heatmap indicates indicates 2 significant cross-correlations:
+- Acousticness vs. Energy (-0.48). The higher the acousticness, the lower the energy.
+- Danceability vs. Valence (0.43). The more danceable a track is, the higher valence/happier it tends to be.
+Another reasonable interpretation is that songs that happen to fall under a certain value of a feature, say acousticness, just happens to have low measured energies. This is our null hypothesis. The alternative hypothesis is that the change of value of one feature causes another. It's reasonable to say to conclude that the happiness of a song (high valence) is the reason why a song is danceable. Given these two hypotheses, it was found that the p-values for these two relationships were < 0.001, thus we can accept the alternative hypothesis. 
+
 ### Boxplots of Audio Features
+One way to neatly see the distribution of audio features is through boxplots. Here, I looked at the 6 most prevalent genres: Electronic, Folk, Hip-Hop, Metal, Pop, and Rock and how each genre's distribution differs. 
 ![Boxplots of Feature Distribution By Genre](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/genre_feature_boxplots.png)
 #### Remarks
 - **Acousticness**:
@@ -106,4 +114,11 @@ To better understand what the genres are clustered by, audio features must first
     - Hip-Hop takes the honor for happiest genre of this sample. 
     - Metal on the other hand is the saddest / angriest genre of the sample, though there are some outliers that score extremely high. 
 
-## Machine Learning
+### Scatter Plots Between Audio Features
+Many scatter plots with selected audio feature comparisons by genre can be found in the FeatureDistributions notebook linked above. Below is just one of those plots, Tempo vs. Energy.
+[Tempo vs. Energy](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/tempo_v_energy.png)
+There are some distinguishable borders between genres in this plot. The left region (low energy, low-mid tempo) consists mostly of Folk and Old-time Historic. As energy increases to the right, more Rock and Electronic songs show up. Fans familiar with these genres of music can verify that estimation to be roughly accurate. We can also see a subtle trend that energy increases with tempo.
+
+## Clustering
+
+## Conclusion
