@@ -208,7 +208,8 @@ There are some interesting conclusions that match up with everyday musical intui
 - In cell 3, we see Rock/Instrumental/Soul-RnB dominate 4 out of 5 "Happy/Cheerful" KMeans Labels. Folk/Blues, which tends to be slower, does end up categorized as typically slow.
 
 We can also visually represent where the genres lie by applying PCA to reduce our data to 2-D. First, here is the 2-D space containing just the genres. 
-![PCA Scatter Plot](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/pca_scatter.png)
+
+![PCA Scatter Plot](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/pca_scatter_genres.png)
 
 The reduced dimensional space showed some well-defined clusters from genres. Folk/Blues, Classical and Old-Time clustered together towards strong acoustic values and weak energy values. Metal seemed to straddle along the instrumentalness axis but skewed towards higher energy values. Compare this to the space where points are instead clustered by their KMeans label:
 ![PCA K-Means All Genres Plot](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/KMeans_all.png)
