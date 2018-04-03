@@ -2,18 +2,19 @@
 By Victor Ramirez
 
 ## Problem
-Suppose a user wanted to expand their music tastes by listening to similar music in other genres. How would a music recommendation engine go about recommending to this user, if it was bounded by the genre classification imposed by other listeners? Genre classification is reliant on subjective listening experiences between music fans. One solution is to take the user's listening history and compare it to other users with similar listening histories to recommend new music. But, using this solution alone has some flaws, namely:
+Suppose a user wanted to expand their music tastes by listening to similar music in other genres. How would a music recommendation engine go about recommending to this user, if it was bounded by the genre classification imposed by other listeners? Genre classification is reliant on subjective listening experiences between music fans. One solution is to take the user's listening history and compare it to other users with similar listening histories to recommend new music. But, using this solution alone has some flaws:
+
 1. Listening history data may not be available, especially for smaller companies or for tracks from newer, relatively unknown artists.
 2. Other users may subject themselves to a music "bubble", only listening to music that is familiar and limiting the opportunity for discovery.
 
-This project aims to cross the boundaries imposed by genre classification and instead find similarities among music instead of just relying on genres. In doing so, it doesn't aim to rewrite music genres, as music genres have cultural and historical nuances that even the most robust machine learning algorithms can't strip down. Rather, it aims to augment music genres and to derive more descriptive subgenres that are based on the audio features from a track. Descriptive subgenres can strengthen a music recommendation engine and give users more options for discovering otherwise unknown music. Netflix is the gold standard for this in movies, but no music company seems to have matched Netflix's knack for creating eerily descriptive movie genres. 
+This project aims to cross the boundaries imposed by genre classification and instead find similarities among music instead of relying on human-assigned labels. By applying clustering techniques on audio features, specific "genres" can be inferred that can describe music differently than conventional music genres. Descriptive subgenres can strengthen a music recommendation engine and give users more options for discovering otherwise unknown music. 
 
 ### Potential Clients
 Clients with music data are the main target for this projects. These clients would fall under 2 types:
 1. A company who already has a robust music recommendation engine and would like to bolster it. E.g. Spotify, Pandora, Last.fm, Youtube
 2. A smaller, competing company that has access to music, but doesn't have much user data to base recommendations off of.
 
-Companies under the 1st group likely have something similar in place already. For example, the audio features I used for music genre clustering come from Spotify's features. But, there are countless ways to extract audio features from audio files. Data from fma has raw features extracted from audio files, but in-depth analysis of what insights to derive from them require advanced signal-processing knowledge that are beyond the scope of this project. This project is tailored for clients that already have descriptive features in place that can be clustered to describe genres.
+Companies under the 1st group likely have something similar in place already. For example, the audio features used for music genre clustering come from Spotify's features. But, there are countless ways to extract audio features from audio files. Data from fma has raw features extracted from audio files, but in-depth analysis of what insights to derive from them require advanced signal-processing knowledge that are beyond the scope of this project. This project is tailored for clients that already have descriptive features in place that can be clustered to describe genres.
 
 ## Data Collection
 The data is originally sourced from the Free Music Archive. Repo [here](https://github.com/mdeff/fma/). The data files used to create the spreadsheets for this repo come from:
@@ -23,7 +24,7 @@ The data is originally sourced from the Free Music Archive. Repo [here](https://
 
 ## [Initial Exploration: Genres and Year Released](https://github.com/victoreram/Springboard-Data-Science/blob/master/GenreClustering/Tracks_by_genre_year.ipynb)
 ### Tracks by Genre
-The first aspect of this project I decided to explore was the amount of tracks that were categorized by genre. Note that this was initially done using `tracks.csv` from FMA. The `tracks_cleaned.csv` has a similar structure and was cleaned after knowing some features outlined by this step.
+The first aspect of this project explored was the amount of tracks that were categorized by genre. Note that this was initially done using `tracks.csv` from FMA. The `tracks_cleaned.csv` has a similar structure and was cleaned after knowing some features outlined by this step.
 
 #### All Genres
 
@@ -34,7 +35,7 @@ The histogram above shows that that the music sampled by this dataset has an imb
 #### Subgenre: Rock
 ![Histogram of Rock](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/hist_rock.png)
 
-When examining the subgenres that compose Rock, I used genres that are direct "children" of rock (see description of `genres.csv` above). Rock has many other subgenres outlined in this dataset, but those are absorbed by the hierarchy level right below Rock. 
+When examining the subgenres that compose Rock, genres that are direct "children" of rock (see description of `genres.csv` above) were used. Rock has many other subgenres outlined in this dataset, but those are absorbed by the hierarchy level right below Rock. 
 
 The histogram above shows roughly the same Pareto distribution for subgenres as the genres. Punk has the most instances near 10,000 which is roughly 30% of the total instances of Rock. The 2nd most (Lo-Fi) has 2/3 of that amount. There's a healthy enough sample size for the 10 subgenres that it's still possible to see some meaningful disparities between subgenres. 
 
@@ -48,18 +49,18 @@ Unfortunately as we see above, most of the tracks in this dataset are released w
 
 ## [Data Wrangling](https://github.com/victoreram/Springboard-Data-Science/blob/master/GenreClustering/DataCleaning.ipynb)
 ### tracks
-`tracks.csv` is the 'meat' of this dataset and contains most of the information I need. This file is multi-indexed into 3 parent indexes: album, artist, track. There are a total of 52 columns initially and not all are relevant for the purpose of this project. The relevant child columns for each parent index are the following:
+`tracks.csv` is the 'meat' of this dataset and contains most of the information needed. This file is multi-indexed into 3 parent indexes: album, artist, track. There are a total of 52 columns initially and not all are relevant for the purpose of this project. The relevant child columns for each parent index are the following:
 - track: genres_top, genres, genres_all, id
 - artist: name
 - album: date_released, title
 
-The multiindex can be sliced as follows: tracks[('parent_index','child_index')]. So, to access track's bit_rate column, you would access it by: tracks[('track', 'bit_rate')]. In DataCleaning.ipynb, I remove a lot of unnecessary columns which allowed me to remove the multiindex without loss of important data.
+The multiindex can be sliced as follows: tracks[('parent_index','child_index')]. So, to access track's bit_rate column, you would access it by: tracks[('track', 'bit_rate')]. In DataCleaning.ipynb, Removing unnecessary columns led to the removal the multiindex without loss of important data.
 
 ### genres
 This spreadsheet is mainly used to translate genre ID's to the name of the genres.
 
 ### echonest
-This file contains a subset of audio features I need for each track. Tracks which have the audio features I need are merged with tracks.
+This file contains a subset of audio features for each track. Tracks which have the audio features are merged with tracks.
 
 ### Merging into a Unified DataFrame
 The code is written in the notebook above. Here is a short summary of some of the steps:
@@ -87,10 +88,10 @@ To better understand what the genres are clustered by, audio features must first
 Given the definitions of these features, it's worthwhile to examine how each of them relate to one another. The heatmap indicates indicates 2 significant cross-correlations:
 - Acousticness vs. Energy (-0.48). The higher the acousticness, the lower the energy.
 - Danceability vs. Valence (0.43). The more danceable a track is, the higher valence/happier it tends to be.
-Another reasonable interpretation is that songs that happen to fall under a certain value of a feature, say acousticness, just happens to have low measured energies. This is our null hypothesis. The alternative hypothesis is that the change of value of one feature causes another. It's reasonable to say to conclude that the happiness of a song (high valence) is the reason why a song is danceable. Given these two hypotheses, it was found that the p-values for these two relationships were < 0.001, thus we can accept the alternative hypothesis. 
+Another reasonable interpretation is that songs that happen to fall under a certain value of a feature, say acousticness, just happens to have low measured energies. This is the null hypothesis. The alternative hypothesis is that the change of value of one feature causes another. It's reasonable to say to conclude that the happiness of a song (high valence) is the reason why a song is danceable. Given these two hypotheses, it was found that the p-values for these two relationships were < 0.001, thus we can accept the alternative hypothesis. 
 
 ### Boxplots of Audio Features
-One way to neatly see the distribution of audio features is through boxplots. Here, I looked at the 6 most prevalent genres: Electronic, Folk, Hip-Hop, Metal, Pop, and Rock and how each genre's distribution differs. 
+One way to neatly see the distribution of audio features is through boxplots. Plotted below are the 6 most prevalent genres: Electronic, Folk, Hip-Hop, Metal, Pop, and Rock and how each genre's distribution differs. 
 
 ![Boxplots of Feature Distribution By Genre](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/genre_feature_boxplots.png)
 #### Remarks
@@ -111,7 +112,7 @@ One way to neatly see the distribution of audio features is through boxplots. He
     - To nobody's surprise, A genre that is mostly centered around vocals (Hip-Hop) vastly outscore all genres in speechiness.
     - Other genres typically score low but have plenty of outliers outside of its upper quartiles.
 - **Tempo**:
-    - Each genre seems to share roughly the same distribution here, with some outliers with high tempos. I'm willing to bet those Rock outliers are actually Punk songs.
+    - Each genre seems to share roughly the same distribution here, with some outliers with high tempos. Those Rock outliers may represent Punk songs.
 - **Valence**:
     - Hip-Hop takes the honor for happiest genre of this sample. 
     - Metal on the other hand is the saddest / angriest genre of the sample, though there are some outliers that score extremely high. 
@@ -120,17 +121,19 @@ One way to neatly see the distribution of audio features is through boxplots. He
 Many scatter plots with selected audio feature comparisons by genre can be found in the FeatureDistributions notebook linked above. Below is just one of those plots, Tempo vs. Energy.
 ![Tempo vs. Energy](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/tempo_v_energy.png)
 
-There are some distinguishable borders between genres in this plot. The left region (low energy, low-mid tempo) consists mostly of Folk and Old-time Historic. As energy increases to the right, more Rock and Electronic songs show up. Fans familiar with these genres of music can verify that estimation to be roughly accurate. We can also see a subtle trend that energy increases with tempo.
+There are some distinguishable borders between genres in this plot. The left region (low energy, low-mid tempo) consists mostly of Folk and Old-time Historic. As energy increases to the right, more Rock and Electronic songs show up. Fans familiar with these genres of music can verify that estimation to be roughly accurate. There's also a subtle trend that energy increases with tempo.
 
 ## [Clustering](https://github.com/victoreram/Springboard-Data-Science/blob/master/GenreClustering/GenreClustering.ipynb)
-The last step in this project is the application of clustering algorithms on our dataset. The normalized values of our audio columns are our features X. Our 'ground truth' estimation is the genre or subgenre value assigned to the track. Note that we aren't treating our ground truth as a hard classification, but rather an intuitive label used to extrapolate some similarities based on the clusters generated by the clustering algorithms. The primary algorithm shown in this report is K-Means, but other algorithms (MeanShift, SpectralClustering) are also used. I chose K-Means because it performed the best, had the most "reasonable" clusters, and returns centroids which can be compared to actual subgenres. I set K = number of genres that meet a certain threshold using all tracks. The K parameter can be modified to suit a variety of constraints given the data. The one disadvantage with using K-Means here is that the cluster sizes are roughly the same size, but the data is imbalanced. For the results from the other algorithms, see the link to the notebook. 
-### All tracks
- Once applying this model I got clusters with the following centroid features:
+The last step in this project is the application of clustering algorithms on our dataset. The normalized values of our audio columns are the features X. The 'ground truth' estimation is the genre or subgenre value assigned to the track. Note that the ground truth is a hard classification, but rather an intuitive label used to extrapolate some similarities based on the clusters generated by the clustering algorithms. 
 
-![K-Means heatmap](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/KM_heatmap.png)
+The primary algorithm shown in this report is K-Means, but other algorithms (MeanShift, SpectralClustering) are also tested. K-Means displayed generated clusters with reasonable boundaries and returns centroids which can be compared to actual subgenres. Because the goal is to find specific subgenres, it's desireable to set K >= the number of genres. The Elbow Method and Silhouette Score comparison yielded no conclusive best K value that met that requirement. As a compromise K is set to the number of genres. The rationale is that choosing K = to the "expected" number of genres allows for at least a 1 to 1 comparison between actual genres and the generated genres. The disadvantage with using K-Means here is that the cluster sizes are roughly the same size, but the data is imbalanced. For the results from the other algorithms, see the link to the notebook. 
+### All tracks
+Applying this model yielded the following centroid features:
+
+![K-Means heatmap](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/all_heatmap.png)
 
 #### Genre Cluster Meanings
-One of the main purposes of this project is to see if clustering provides any sort of meaning behind any existing structure within the data. Given the cluster centroids from K-Means, we can see the values which characterize each K-Means Label. From eyeballing the values and heatmap, I can describe these clusters based on the meaning behind each feature. In quotes are best-guess interpretations for these genres, meant to resemble Netflix's disturbingly specific genres. Someone with a wider music vocabulary can easily think up of better genre names.  
+One of the main purposes of this project is to see if clustering provides any sort of meaning behind any existing structure within the data. Given the cluster centroids from K-Means, we can see the values which characterize each K-Means Label. From eyeballing the values and heatmap, clusters are described based on the meaning behind each feature. In quotes are best-guess interpretations for these genres, meant to resemble Netflix's disturbingly specific genres. Someone with a wider music vocabulary can easily think up of better genre names.  
 - **KM0**: Highly acoustic and instrumental. Low danceability, energy tempo, valence. "Slow & Somber Acoustics"
 - **KM1**: Highly instrumental and valent. Mid-tempo, mid-energy. Low acousticness and speechiness. "Happy & Danceable Instrumentals"
 - **KM2**: Highly instrumental. Mid acousticness. Low valence, speechiness. "Sad Instrumentals"
@@ -207,22 +210,24 @@ There are some interesting conclusions that match up with everyday musical intui
 
 - In cell 3, we see Rock/Instrumental/Soul-RnB dominate 4 out of 5 "Happy/Cheerful" KMeans Labels. Folk/Blues, which tends to be slower, does end up categorized as typically slow.
 
-We can also visually represent where the genres lie by applying PCA to reduce our data to 2-D. First, here is the 2-D space containing just the genres. 
+Applying PCA to reduce the data to 2-D allows the data to be visualized. The "x" and "y" axis in these plots represent the newly reduced audio features generated by PCA. First, here is the 2-D space containing just the genres. 
 
 ![PCA Scatter Plot](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/pca_scatter_genres.png)
+*A scatter plot of the distribution of tracks based on audio features, with x and y being the new features constructed by PCA. Each track is colored by their actual genre.*
 
 The reduced dimensional space showed some well-defined clusters from genres. Folk/Blues, Classical and Old-Time clustered together towards strong acoustic values and weak energy values. Metal seemed to straddle along the instrumentalness axis but skewed towards higher energy values. Compare this to the space where points are instead clustered by their KMeans label:
 ![PCA K-Means All Genres Plot](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/KMeans_all.png)
+*A scatter plot of the distribution of tracks based on audio features, with x and y being the new features constructed by PCA. Each track is colored by the assigned K-Means label.*
 
 K-Means labels crossed genre boundaries with few exceptions. Perhaps the most striking compatibility between labels is Metal - "Happy & Upbeat Instrumentals" straddling along the top left edge. Another one is Classical with "Slow & Somber Acoustics". 
 
 ### Rock
-We use the same techniques again, this time only examining the top 5 most prevalent Rock subgenres as our genres. 
+The same process is repeated, this time only examining the top 5 most prevalent Rock subgenres as our genres. 
 
 #### Rock Subgenre Cluster Meanings
 ![K-Means heatmap for rock](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/Rock_heatmap.png)
 
-My best guess interpretations are:
+The best guess interpretations are:
 - **KM0**: High Energy, Valence, Tempo, Danceablity. Low acousticness, instrumentalness. Probably just described Pop. "Upbeat Rock with Synths to Dance to"
 - **KM1**: High Acousticness and Instrumentalness. Not Danceable. Low Speechiness, Tempo, and Valence. "Slow & Depressing Rock"
 - **KM2**: High Acousticness, Instrumentalness and Valence. Lowest Speechiness and Tempo. "Slow & Cheerful Rock"
@@ -299,11 +304,14 @@ More interesting and intuitive conclusions can be made from the cluster grouping
 The reduced dimensional space for just the subgenres is represented below. 
 
 ![subgenre PCA](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/subgenreClustering.png)
+*A scatter plot of the distribution of rock tracks based on audio features, with x and y being the new features constructed by PCA. Each track is colored by their actual genre.*
 
 The subgenres within Rock show even less structure than all genres. The only decipherable subgenre is Psych-Rock straddling along the bottom left edge. The K-Means model shows more bounded structures:
 
 ![subgenre PCA KMeans](https://github.com/victoreram/Springboard-Data-Science/blob/master/GenreClustering/Report/KMeansClustering.png)
+*A scatter plot of the distribution of rock tracks based on audio features, with x and y being the new features constructed by PCA. Each track is colored by their K-Means label.*
 These clusters did capture some similarities. "Slow & Depressing Rock" managed to capture some Psych-Rock. "Slow & Cheerful Rock" captures some Indie-Rock as well. 
+
 ## Conclusion
 
 ### Intuitive Pairings
