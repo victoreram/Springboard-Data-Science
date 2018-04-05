@@ -85,9 +85,11 @@ To better understand what the genres are clustered by, audio features must first
 
 ### Relationships Between Audio Features
 ![Heatmap of Audio Features](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/audio_heatmap.png)
+
 Given the definitions of these features, it's worthwhile to examine how each of them relate to one another. The heatmap indicates indicates 2 significant cross-correlations:
 - Acousticness vs. Energy (-0.48). The higher the acousticness, the lower the energy.
 - Danceability vs. Valence (0.43). The more danceable a track is, the higher valence/happier it tends to be.
+
 Another reasonable interpretation is that songs that happen to fall under a certain value of a feature, say acousticness, just happens to have low measured energies. This is the null hypothesis. The alternative hypothesis is that the change of value of one feature causes another. It's reasonable to say to conclude that the happiness of a song (high valence) is the reason why a song is danceable. Given these two hypotheses, it was found that the p-values for these two relationships were < 0.001, thus we can accept the alternative hypothesis. 
 
 ### Boxplots of Audio Features
@@ -130,10 +132,11 @@ The primary algorithm shown in this report is K-Means, but other algorithms (Mea
 ### All tracks
 Applying this model yielded the following centroid features:
 
-![K-Means heatmap](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/all_heatmap.png)
+![K-Means heatmap](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/heatmap_all.png)
 
 #### Genre Cluster Meanings
-One of the main purposes of this project is to see if clustering provides any sort of meaning behind any existing structure within the data. Given the cluster centroids from K-Means, we can see the values which characterize each K-Means Label. From eyeballing the values and heatmap, clusters are described based on the meaning behind each feature. In quotes are best-guess interpretations for these genres, meant to resemble Netflix's disturbingly specific genres. Someone with a wider music vocabulary can easily think up of better genre names.  
+One of the main purposes of this project is to see if clustering provides any sort of meaning behind any existing structure within the data. Given the cluster centroids from K-Means, we can see the values which characterize each K-Means Label. From eyeballing the values and heatmap, clusters are described based on the meaning behind each feature. In quotes are best-guess interpretations for these genres, meant to resemble Netflix's disturbingly specific genres. 
+
 - **KM0**: Highly acoustic and instrumental. Low danceability, energy tempo, valence. "Slow & Somber Acoustics"
 - **KM1**: Highly instrumental and valent. Mid-tempo, mid-energy. Low acousticness and speechiness. "Happy & Danceable Instrumentals"
 - **KM2**: Highly instrumental. Mid acousticness. Low valence, speechiness. "Sad Instrumentals"
@@ -216,7 +219,8 @@ Applying PCA to reduce the data to 2-D allows the data to be visualized. The "x"
 *A scatter plot of the distribution of tracks based on audio features, with x and y being the new features constructed by PCA. Each track is colored by their actual genre.*
 
 The reduced dimensional space showed some well-defined clusters from genres. Folk/Blues, Classical and Old-Time clustered together towards strong acoustic values and weak energy values. Metal seemed to straddle along the instrumentalness axis but skewed towards higher energy values. Compare this to the space where points are instead clustered by their KMeans label:
-![PCA K-Means All Genres Plot](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/KMeans_all.png)
+
+![PCA K-Means All Genres Plot](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/pca_scatter_km.png)
 *A scatter plot of the distribution of tracks based on audio features, with x and y being the new features constructed by PCA. Each track is colored by the assigned K-Means label.*
 
 K-Means labels crossed genre boundaries with few exceptions. Perhaps the most striking compatibility between labels is Metal - "Happy & Upbeat Instrumentals" straddling along the top left edge. Another one is Classical with "Slow & Somber Acoustics". 
@@ -225,7 +229,7 @@ K-Means labels crossed genre boundaries with few exceptions. Perhaps the most st
 The same process is repeated, this time only examining the top 5 most prevalent Rock subgenres as our genres. 
 
 #### Rock Subgenre Cluster Meanings
-![K-Means heatmap for rock](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/Rock_heatmap.png)
+![K-Means heatmap for rock](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/heatmap_rock.png)
 
 The best guess interpretations are:
 - **KM0**: High Energy, Valence, Tempo, Danceablity. Low acousticness, instrumentalness. Probably just described Pop. "Upbeat Rock with Synths to Dance to"
@@ -303,7 +307,7 @@ More interesting and intuitive conclusions can be made from the cluster grouping
 
 The reduced dimensional space for just the subgenres is represented below. 
 
-![subgenre PCA](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/subgenreClustering.png)
+![subgenre PCA](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/subgenreClustering1.png)
 *A scatter plot of the distribution of rock tracks based on audio features, with x and y being the new features constructed by PCA. Each track is colored by their actual genre.*
 
 The subgenres within Rock show even less structure than all genres. The only decipherable subgenre is Psych-Rock straddling along the bottom left edge. The K-Means model shows more bounded structures:
