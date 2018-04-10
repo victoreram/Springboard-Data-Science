@@ -50,7 +50,7 @@ These steps are performed using the `clean_lines` function from the module `odds
 
 ## Initial Findings (Using 2017-18 Data)
 ### Betting Lines are Normally Distributed
-![Residuals](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/margins_residuals.png)
+![Residuals](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/margin_residuals.png)
 Based on the residuals and the histograms below, both the betting lines and actual results are normally distributed.
 
 
