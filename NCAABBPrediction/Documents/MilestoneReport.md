@@ -51,14 +51,22 @@ These steps are performed using the `clean_lines` function from the module `odds
 ## Initial Findings (Using 2017-18 Data)
 ### Betting Lines are Normally Distributed
 ![Residuals](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/margin_residuals.png)
-Based on the residuals and the histograms below, both the betting lines and actual results are normally distributed.
 
+Based on the residuals and the histograms below, both the betting lines and actual results are normally distributed. The following statistics were calculated for each distribution:
 
+`
+Mean betting line for home team: 4.890924741760944 
+Mean margin for home team: 5.121495327102804
+Standard deviation betting line for home team: 8.616574535963725 
+Standard deviation result for home team: 13.986181735365248
+`
 ### Betting Lines are Closely Related To Actual Results
 ![Betting Odds](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/odds_distribution.png)
+
 Plotting betting line vs. actual margin of victory shows a correlation (r=0.6) with a very low p-value (<0.01).
 
 ### Betting Against The Spread Was Profitable in 2018
 ![Betting Against The Spread](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/bets.png)
+
 Simply betting against the spread performed surprisingly well as a strategy for the 2017-18. However, further analysis of different years may show different conclusions. 
 
