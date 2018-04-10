@@ -56,8 +56,11 @@ Based on the residuals and the histograms below, both the betting lines and actu
 
 `
 Mean betting line for home team: 4.890924741760944 
+
 Mean margin for home team: 5.121495327102804
-Standard deviation betting line for home team: 8.616574535963725 
+
+Standard deviation betting line for home team: 8.616574535963725
+
 Standard deviation result for home team: 13.986181735365248
 `
 ### Betting Lines are Closely Related To Actual Results
