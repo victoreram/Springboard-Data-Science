@@ -5,6 +5,15 @@ Predicting the outcomes of sporting events is a staple activity in sports that w
 
 The highly variant nature of college basketball presents an interesting case; the NCAA tournament is dubbed "March Madness" for a reason. [Kaggle](https://www.kaggle.com/c/mens-machine-learning-competition-2018/leaderboard) hosts yearly competitions for predicting March Madness but very few models consistently perform well. Vegas and the Oddsmakers are still the gold standard in predicting sports and March Madness is no different. After all, if they weren't, they wouldn't be profitable. Like a small-school underdog facing a blue-blood powerhouse, this model seeks to answer the question: Can we beat the odds?
 
+### Explaining Betting Lines
+Resources: [1](https://www.oddsshark.com/sports-betting/point-spread-betting) 
+[2](https://www.pinnacle.com/en/betting-articles/Basketball/Basketball-Bet-Types-Explained/HST2G2NVF267NTS3) (See Handicap Betting)
+[3](https://www.quora.com/What-does-covering-the-spread-mean-in-sports-betting) The convention used in the Spurs/Lakers example is flipped in this case. Here, favored teams have positive point spreads.
+
+Suppose two teams play each other, Team A and Team B. Team A is perceived to be stronger than Team B. Oddsmakers will attempt to gauge how much stronger Team A is than Team B by setting how many points Team A is favored to win over Team B. This estimation of how many points Team A is favored by is the "Point spread", or betting line.
+
+Now suppose that the oddsmakers set the betting line to be +5.5 for Team A, which is equivalent to -5.5 for Team B. This means that the oddsmakers value that Team A is a 5 point favorite over Team B. If a better bets that Team A will win by 5 points or less, or for Team B to win, he is betting for Team A to "cover the spread". If another better bets that Team A will win by more than 5 points, he is betting for Team A to "beat the spread". This is also referred to betting "against the spread".  
+
 ## Clients
 ### The Underdog Mid-Majors: Sports Betters
 Enthusiastic sports betters would be highly interested in a model that gives them an edge over the house. A well-performing model could yield lucrative returns on betting in the long run.
