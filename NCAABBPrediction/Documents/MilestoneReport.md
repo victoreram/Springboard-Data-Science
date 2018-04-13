@@ -14,6 +14,11 @@ Suppose two teams play each other, Team A and Team B. Team A is perceived to be 
 
 Now suppose that the oddsmakers set the betting line to be +5.5 for Team A, which is equivalent to -5.5 for Team B. This means that the oddsmakers value that Team A is a 5 point favorite over Team B. If a better bets that Team A will win by 5 points or less, or for Team B to win, he is betting for Team A to "cover the spread". If another better bets that Team A will win by more than 5 points, he is betting for Team A to "beat the spread". This is also referred to betting "against the spread".  
 
+### Objective: Create a Model That Suggests a Profitable Betting Strategy
+The goal of this project is to create a model that can:
+1. Accurately predict the outcome of games.
+2. Using the predicted outcome, identify bets to make according the Vegas betting lines and develop a profitable betting strategy.
+
 ## Clients
 ### The Underdog Mid-Majors: Sports Betters
 Enthusiastic sports betters would be highly interested in a model that gives them an edge over the house. A well-performing model could yield lucrative returns on betting in the long run.
