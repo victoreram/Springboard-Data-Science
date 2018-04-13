@@ -2,7 +2,12 @@
 By Victor Ramirez
 
 ## Problem
-Suppose a user wanted to expand their music tastes by listening to similar music in other genres. How would a music recommendation engine go about recommending to this user, if it was bounded by the genre classification imposed by other listeners? Genres are labels that people apply to tracks or artists. But what one person might label as 'pop' might be labelled as 'folk' by someone else. If we recommend music based on subjective genres; that is giving more of genre X to someone because they have listened to genre X in the past, this might not actually give them what they want. This analysis compares genre labels to the actual audio characteristics of the music, to see if we could provide better recommendations this way. One solution is to take the user's listening history and compare it to other users with similar listening histories to recommend new music. But, using this solution alone has some flaws:
+### Introduction
+
+Music recommendation engines drive the services offered by music streaming companies such as Spotify, Last.fm, and Pandora. A core component of these engines are the genre labels for each track which people apply to tracks or artists. These genre labels offer a rough measure that gauges similarities and differences between tracks. However, how these labels are applied are subjective. One person might label a track 'pop' but be labelled as 'folk' by someone else.
+
+### Music Discovery
+Suppose a user wanted to expand their music tastes by listening to similar music in other genres. How would a music recommendation engine go about recommending to this user, if it was bounded by the genre classification imposed by other listeners?  If we recommend music based on subjective genres; that is giving more of genre X to someone because they have listened to genre X in the past, this might not actually give them what they want. This analysis compares genre labels to the actual audio characteristics of the music, to see if we could provide better recommendations this way. One solution is to take the user's listening history and compare it to other users with similar listening histories to recommend new music. But, using this solution alone has some flaws:
 
 1. Listening history data may not be available, especially for smaller companies or for tracks from newer, relatively unknown artists.
 2. Other users may subject themselves to a music "bubble", only listening to music that is familiar and limiting the opportunity for discovery.
@@ -343,11 +348,13 @@ A user who listens to mostly, say Classical, may discover Folk/Blues songs they 
 
 ## Future Work And Recommendations
 
-This project is a largely contained model. A more applicable version can be realized and augmented into a real music recommendation engine with the following additions:
+This project is a largely contained model that is only meant to generate descriptive subgenres and be augmented to an existing music recommendation engine. This model can be further enhanced with the following additions:
 
 - Implementation of more tracks. This would allow further breakdowns of main genres and can allow for more structure based on audio features to arise.
 - Creation of different audio features extracted from audio files (Distortion, Percussion, etc.). This model relies on the audio features provided, interpreted, and extracted by Spotify. More audio features will allow more ways to describe music.
-- Augmentation with social features. This model doesn't take into account any social features. Adding a different set of clustering based on social features could highlight a different dimension that can be added to a music recommendation engine.
+- Augmentation with contextual features. For example, one of the initial goals of this project was to see if the differences between songs released in different decades (70's, 80's, 90's, etc.) were prominent enough to show up in clusters. Adding a different set of clustering based on social features could highlight a different dimension that can be added to a music recommendation engine.
+
+A fully realized version of this enhanced model could generate numerous (in the thousands) descriptive genres like Netflix for movies. Then, when augmented to a music recommendation engine, can represent categories of music that specific users may be interested in. For example, a user who is generally found to like relaxing music may be recommended music labeled as "Soothing Classical" to "Ambient Instrumentals". Thus, a user can discover music that can describe the type of music they like, rather than sticking to just genres.
 
 
 
