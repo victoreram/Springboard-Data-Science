@@ -245,7 +245,7 @@ K-Means labels crossed genre boundaries with few exceptions. Perhaps the most st
 The same process is repeated, this time only examining the top 5 most prevalent Rock subgenres as our genres. 
 
 #### Rock Subgenre Cluster Meanings
-![K-Means heatmap for rock](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/heatmap_rock.png)
+![K-Means heatmap for rock](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/GenreClustering/Report/KM5_heatmap.png)
 
 The best guess interpretations are:
 - **KM0**: High Energy, Valence, Tempo, Danceablity. Low acousticness, instrumentalness. Probably just described Pop. "Upbeat Rock with Synths to Dance to"
