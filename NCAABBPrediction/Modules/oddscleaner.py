@@ -48,7 +48,16 @@ def replace_na(df, na_cols, replace_with):
 
 
 
-def clean_lines(df, col_starts_with = 'line', avg_line = 'lineavg'):
+def clean_lines(df, col_starts_with = 'line', avg_line = 'lineavg', score1='hscore', score2='rscore', margin='margin'):
+    
+    # Create "margin" column
+    df[margin] = df[score1] - df[score2]
+    df = df.dropna(subset=['margin'])
+
+    
+    # Convert to datetime
+    df.date = pd.to_datetime(df.date)
+    df = df.sort_values('date').reset_index(drop=True).sort_index()
     
     # Find columns containing lines
     line_cols = [col for col in df if col.startswith(col_starts_with)]
@@ -68,3 +77,23 @@ def clean_lines(df, col_starts_with = 'line', avg_line = 'lineavg'):
     df[line_cols] = df[line_cols].applymap(round_pt5)
       
     return df
+
+def add_spread_cols(odds, line_col='lineavg', margin_col='margin', against_col='againstspread', cover_col='coverspread'):
+    odds[against_col] = (odds[[line_col, margin_col]]
+                                .apply(lambda x: 1 if x[1] > x[0] else -1, axis=1)
+                               )
+    odds[cover_col] = -odds[against_col]
+    return odds
+
+# odds_2017['favwins'] = (odds_2017[['lineavg', 'margin']]
+#                         .apply(lambda x: 1 if (x[1] > 0.0) & (x[0] > 0.0) else 0, axis=1)
+#                        )
+# odds_2017.favwins = odds_2017.favwins.astype('category')
+# odds_2017['homewins'] = list(map(lambda x: 1 if x > 0.0 else 0, odds_2017.margin.values))
+# odds_2017.homewins = odds_2017.homewins.astype('category')
+# odds_2017['favoriteID'] = (odds_2017[['lineavg', 'margin', 'homeID', 'roadID']]
+#                            .apply(lambda x: x[2] if (x[1] > 0.0) & (x[0] > 0.0) else x[3], axis=1)
+#                           )
+# odds_2017['underdogID'] = (odds_2017[['lineavg', 'margin', 'homeID', 'roadID']]
+#                            .apply(lambda x: x[3] if (x[1] > 0.0) & (x[0] > 0.0) else x[2], axis=1)
+#                           )
