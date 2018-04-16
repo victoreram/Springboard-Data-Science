@@ -89,8 +89,6 @@ Standard deviation result for home team: 13.986181735365248
 
 Plotting betting line vs. actual margin of victory shows a correlation (r=0.6) with a very low p-value (<0.01).
 
-#### Calculating a Profit Metric
-Before
 
 ### Betting Against The Spread Was Profitable in the 2018 Regular Season
 ![Betting Against The Spread](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/bets.png)
@@ -122,12 +120,13 @@ The main feature for this model are the Elo Ratings. Developed initially as a wa
 Because this rating system is zero-sum, the losing team loses Elo points equal to the Elo points the winning team gains. Thus, the average Elo Rating, which is set to 1500, is stable across all seasons. The Elo Rating system has many more nuances that are explained in the above links.
 
 The scale for Elo Ratings are estimated as follows:
--**>2000**: Elite, championship caliber. Reserved for the very best teams, typically top 10, in college basketball. This corresponds to the 1-3 seeds. 
--**1801-2000**: Very Good/Great; a tier below elite. Teams in this category largely make up the stronger half of the tournament, the 3-8 seeds.
--**1601-1800**: Good / Above average. Teams in this category largely make up the weaker half of the tournament, the 8-13 seeds. 
--**1401-1600**: Average. Teams in the tournament that fall in this range are typically among the last ones in and are high seeds (14-16). 
--**1201-1400**. Below Average. Teams in this caregory have no business being in the tournament.
--**<1200**. Bad. These teams are typically the bottomfeeders of the league. 
+
+- **>2000**: Elite, championship caliber. Reserved for the very best teams, typically top 10, in college basketball. This corresponds to the 1-3 seeds. 
+- **1801-2000**: Very Good/Great; a tier below elite. Teams in this category largely make up the stronger half of the tournament, the 3-8 seeds.
+- **1601-1800**: Good / Above average. Teams in this category largely make up the weaker half of the tournament, the 8-13 seeds. 
+- **1401-1600**: Average. Teams in the tournament that fall in this range are typically among the last ones in and are high seeds (14-16). 
+- **1201-1400**. Below Average. Teams in this caregory have no business being in the tournament.
+- **<1200**. Bad. These teams are typically the bottomfeeders of the league. 
 
 #### [Tuning Elo Parameters](https://github.com/victoreram/Springboard-Data-Science/blob/master/NCAABBPrediction/EloTuning.ipynb)
 
