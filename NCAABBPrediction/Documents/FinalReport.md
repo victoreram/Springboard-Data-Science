@@ -12,7 +12,10 @@ Resources: [1](https://www.oddsshark.com/sports-betting/point-spread-betting)
 
 Suppose two teams play each other, Team A and Team B. Team A is perceived to be stronger than Team B. Oddsmakers will attempt to gauge how much stronger Team A is than Team B by setting how many points Team A is favored to win over Team B. This estimation of how many points Team A is favored by is the "Point spread", or betting line.
 
-Now suppose that the oddsmakers set the betting line to be +5.5 for Team A, which is equivalent to -5.5 for Team B. This means that the oddsmakers value that Team A is a 5 point favorite over Team B. If a better bets that Team A will win by 5 points or less, or for Team B to win, he is betting for Team A to "cover the spread". If another better bets that Team A will win by more than 5 points, he is betting for Team A to "beat the spread". This is also referred to betting "against the spread".  
+Now suppose that the oddsmakers set the betting line to be +5.5 for Team A, which is equivalent to -5.5 for Team B. This means that the oddsmakers value that Team A is a 5 point favorite over Team B. If one bets that Team A will win by 5 points or less, or for Team B to win, he is betting for Team A, the favorite, to "lose against the spread (ATS)". This is also referred to Team B beating the spread. If another bets that Team A will win by more than 5 points, he is betting for the favorite to "win against the spread". This time, it's Team A beating the spread. 
+
+#### Convention
+For here on out, all actions against the spread are by the favorite team. So, the plots labeled are with the favorite winning or losing against the spread. 
 
 ### Objective: Create a Model That Suggests a Profitable Betting Strategy
 The goal of this project is to create a model that can:
@@ -85,15 +88,27 @@ Plotting betting line vs. actual margin of victory shows a correlation (r=0.6) w
 ### Betting Against The Spread Was Profitable in 2018
 ![Betting Against The Spread](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/bets.png)
 
-Simply betting against the spread performed surprisingly well as a strategy for the 2017-18. However, further analysis of different years may show different conclusions. 
+Simply betting for the favorite to beat the spread was profitable 2017-18 regular season. However, further analysis of different years or different circumstances may show different conclusions. 
+
+## Blind Model - Evaluating on 2017-2018 Tournaments
+
+What this model is actually being evaluated on is its performance on predicting the NCAA tournaments. To begin, the naive strategy of always betting against or covering the spread is applied to the 2017 and 2018 tournaments. The results of this strategy are shown below:
+
+![Betting Naive](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/bets_tourney.png)
+
+This time, betting for the favorite to lose against the spread in the NCAA Tournament was profitable. This is reasonable because upsets, or games where the underdog wins, are more frequent in the NCAA tournament.
 
 ## Machine Learning
 
-### Linear Regression With Elo Ratings
+### Main Feature: Elo Ratings
+
 
 #### Tuning Elo Parameters
+![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/MSE_vs_K.png)
 
 #### Linear Regression With Optimal Elo Ratings
+
+![Betting EloLR](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/bets_tourney_lr.png)
 
 ### Linear Regression With Elo Ratings And Advanced Stats
 
