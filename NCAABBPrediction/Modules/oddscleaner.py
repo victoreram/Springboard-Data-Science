@@ -74,7 +74,7 @@ def clean_lines(df, col_starts_with = 'line', avg_line = 'lineavg', score1='hsco
     df = replace_na(df, na_cols=line_cols, replace_with=avg_line)
     
     # Round lines to nearest point 5
-    df[line_cols] = df[line_cols].applymap(round_pt5)
+    #df[line_cols] = df[line_cols].applymap(round_pt5)
       
     return df
 
