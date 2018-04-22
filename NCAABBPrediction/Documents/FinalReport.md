@@ -112,7 +112,10 @@ This time, betting for the favorite to lose against the spread in the NCAA Tourn
 
 ## Using Supervised Learning to Predict Margin of Victory
 
-### Main Feature: [Elo Ratings](https://en.wikipedia.org/wiki/Elo_rating_system)
+### Baseline Model: Linear Regression With Elo Ratings
+The baseline model is a linear regression where X = Elo Rating difference between 2 teams, and y = margin of victory. This model is explained below. 
+
+#### Main Feature: [Elo Ratings](https://en.wikipedia.org/wiki/Elo_rating_system)
 The main feature for this model are the Elo Ratings. Developed initially as a way to calculate skill levels for players in zero-sum games, Elo Ratings are a comprehensive metric that estimates a basketball team's strength. This model is similar to how [FiveThirtyEight](https://fivethirtyeight.com/features/how-we-calculate-nba-elo-ratings/) calculates their Elo Ratings. A team's Elo Rating is recalculated each game and takes into account:
 - the margin of victory/defeat
 - the strength of the teams facing each other 
@@ -147,7 +150,6 @@ It was found that the Elo Rating which minimized MSE were calculated with parame
 
 ![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/MSE_vs_K.png)
 
-
 #### Linear Regression With Optimal Elo Ratings
 
 The baseline supervised model is the linear regression model outlined above where feature column X = `SeasonEloDiff` calculated with the optimal parameters above, and y = margin of victory. This model is trained with the results from the 2003-2016 NCAA tournaments and tested with the 2017-2018 tournaments. The results of the regression model are shown below.
@@ -160,11 +162,35 @@ Elo Ratings by themselves turn out to be a solid indicator of margin of victory.
 
 The baseline model was able to craft a more profitable betting strategy than simply betting for the favorite to beat or lose ATS. Coming ahead by 13 games out of 134, this amounts to a profit of $100*(13/134) = $9.70/game. Not bad!
 
-### Linear Regression With Elo Ratings And Advanced Stats
+### Feature Engineering: Augmenting the Baseline Model with Advanced Stats
 
-### Random Forests With Elo Ratings Adn Advanced Stats
+In addition to the Elo Ratings, advanced stats can be used to make a prediction between teams. Elo Ratings alone are a great estimator of a team's overall strength, but they don't show how teams of different profiles match up. For example, suppose two teams with roughly the same Elo Rating face each other. Team A however is prone to turning the ball over, while Team B specializes in exploiting that weakness. Using various advanced stats would in theory illuminate this matchup problem.
 
-## Evaluating Against Vegas Betting Line
+The advanced stats chosen for this project are chosen to show the various aspects of basketball. These are defined (from the NBA's [stat glossary](https://stats.nba.com/help/glossary/)):
+- **Assist Rate (AstR)**: The percentage of team possessions that end in assists. This describes how well a team passes the ball.
+- **Turnover Rate (TOR)**: The percentage of team possessions that end in a turnover. A high turnover rate means a team gives a lot of its offensive possessions to the other team. Teams that are good at taking care of the ball and maximizing the amount of possessions have a low turnover rate.
+- **Effective Field Goal Percentage (eFGP)**: Shooting percentage that accounts for the point value of the shot. A 3-point shot is worth more than a regular shot, so it's weighed more in this percentage. This stat describes how well a team shoots the ball.
+- **Free Throw Rate (FTAR)**: The rate at which a team takes free throw shots. This stat describes how well a team draws fouls and its affinity for getting to the free throw line, which is generally an efficient strategy in basketball.
+- **3-Point Rate (TPAR)**: The rate at which a team takes 3-point shots. The 3 point shot is one of the most efficient shots in basketball, so this stat describes how well a team chooses its shots.
+- **Rebound Percentage**: The percentage of available rebounds a team grabs. Rebounds are important for closing out a defensive possession (defensive rebound) or getting an extra offensive possession (offensive rebound). A high rebound percentage means a team is proficient in maximizing the amount of possessions it has and minimizing the other team's possessions.
+- **Possessions / Tempo**: The amount of possessions a team has per game. A team with a low tempo plays slow, and a team with a high tempo wants to push the pace. Slow teams lend itself to games with lower variance because they force less possessions in a game. Dominant slow teams are prone to upsets. By itself this isn't a good predictor, but it's an important part of a team's profile.
+- **Net Rating / Adjusted Net Rating (AdjNetRtg)**. The difference between the average points per possession one team scores (Offensive Rating) and the average points per possession it gives up (Defensive Rating). This is a stat describes how well a team's offense and defense performs overall. Raw Net Rating is purely point differential. The adjusted net rating used here is adjusted by a team's tempo, as well as how strong a team's opponent is (estimated by the difference in Elo Ratings).
+
+#### Linear Regression
+![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_lr_adv.png)
+
+#### Linear Support Vector Regressor
+![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_svr_adv.png)
+
+#### Decision Tree Regressor
+![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_dtr.png)
+
+
+## Full Results
+![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/bets_all.png)
+
 
 ## Conclusions
+### Client Recommendations
 
+### Future Work
