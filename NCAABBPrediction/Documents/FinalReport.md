@@ -152,7 +152,7 @@ It was found that the Elo Rating which minimized MSE were calculated with parame
 
 #### Linear Regression With Optimal Elo Ratings
 
-The baseline supervised model is the linear regression model outlined above where feature column X = `SeasonEloDiff` calculated with the optimal parameters above, and y = margin of victory. This model is trained with the results from the 2003-2016 NCAA tournaments and tested with the 2017-2018 tournaments. The results of the regression model are shown below.
+The baseline supervised model is the linear regression model outlined above where feature column X = `SeasonEloDiff` calculated with the optimal parameters above, and y = margin of victory. This model is trained with the results from the 2003-2016 NCAA tournaments and tested with the 2017-2018 tournaments. X and y are mirrored, i.e. have symmetrical negative values, so that the model sees both winning and losing samples. The results of the regression model are shown below.
 
 ![Betting EloLR](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/mov_vs_elo.png)
 
@@ -176,19 +176,72 @@ The advanced stats chosen for this project are chosen to show the various aspect
 - **Possessions / Tempo**: The amount of possessions a team has per game. A team with a low tempo plays slow, and a team with a high tempo wants to push the pace. Slow teams lend itself to games with lower variance because they force less possessions in a game. Dominant slow teams are prone to upsets. By itself this isn't a good predictor, but it's an important part of a team's profile.
 - **Net Rating / Adjusted Net Rating (AdjNetRtg)**. The difference between the average points per possession one team scores (Offensive Rating) and the average points per possession it gives up (Defensive Rating). This is a stat describes how well a team's offense and defense performs overall. Raw Net Rating is purely point differential. The adjusted net rating used here is adjusted by a team's tempo, as well as how strong a team's opponent is (estimated by the difference in Elo Ratings).
 
+![Betting EloLR](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/stats_heatmap.png)
+
+Given these new features, X now has columns of the Elo Rating difference and the difference in advanced stats between two teams in each row. Because each of these statistics have various ranges, each statistic was scaled using Robust Scaler. This scaler yielded the most reliable results in part because it's able to handle outliers better than Standard SCaler. This new data is then implemented in the machine learning algorithms below.
+
 #### Linear Regression
 ![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_lr_adv.png)
 
-#### Linear Support Vector Regressor
+Surprisingly, linear regression with these new advanced metrics performed *worse* than linear regression with just the difference in Elo Rating. This could be because the algorithm is facing "feature overload" and doesn't know how to deal with teams of different profiles beating each other. Examining the coefficients sheds some light on this:
+```
+{'AdjNetRtgdiff': array([ 4.6867032]),
+ 'AstRdiff': array([-0.75097755]),
+ 'FTARdiff': array([-1.13091026]),
+ 'Posdiff': array([-0.77905128]),
+ 'RPdiff': array([ 0.22327253]),
+ 'SeasonEloDiff': array([ 0.01703936]),
+ 'TORdiff': array([ 0.38684909]),
+ 'TPARdiff': array([ 0.12673679]),
+ 'eFGPdiff': array([-0.64045008])}
+```
+Basically, all of the stats chosen except for TO Rate are advantageous to have a larger number of. But, the coefficients from linear regression show that TO rate is positive, but Ast Rate, FTA Rate, TPA Rate, and eFG% are negative. This means that the model thinks that a team with a higher TO rate is generally advantageous, and having a lower Ast Rate, FTA Rate, TPA Rate, and eFG% is generally disadvantageous which is not the case. 
+
+
+#### Linear Support Vector Regressor (SVR)
+The next algorithm chosen to predict margin of victory is the linear support vector regressor. This was chosen primarily because of its versatility. It also provides a different model other than Linear Regression of computing a smooth regression line. Performing cross-validation using the two different models below showed an optimal C paremeter of 1.0.
+
+##### With Just Elo Ratings
+![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_svr_basic.png)
+
+LSVR was first applied under the same conditions as the baseline linear regression model: X is a single column that consists of just the difference in Elo Rating between two teams and y is the point margin. This is to serve as a baseline to see how much the addition of features affects the overall model. Linear Regression outperformed Linear SVR based on Pearson r (0.6 vs. 0.5).
+
+##### With Elo Ratings and Advanced Stats
 ![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_svr_adv.png)
+
+LSVR was then applied with X containing Elo Ratings and Advanced Stats. The overall predictive power was boosted only slightly, with an improvement in r score by 0.1.
 
 #### Decision Tree Regressor
 ![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_dtr.png)
 
+The last machine learning algorithm used involved decision trees. The main advantage of using decision trees is that it should be able to discover decision rules that are similar to the heuristics of examining how teams of different profiles match up. The main disadvantage for decision tree based models is they're prone to overfitting especially given many features. Usually it's recommended to perform dimensionality reduction in this case, but the training data is not particularly wide (n_samples >> n_features) so this isn't necessary.
 
-## Full Results
+This model was cross-validated with the parameters:
+```python
+parameters = {'min_samples_split':np.arange(2,10), 
+              'min_samples_leaf':np.arange(0.01,0.08,0.01)}
+```
+These two parameters control the number of samples in a leaf mode in different ways. A small number for either of these parameters will make the model more prone to overfitting because it will overreact to anomalies within the data, such as upsets that are incredibly unlikely to occur again. Setting a number too high will prevent the model from learning from the data because it won't be able to differentiate between various scendarios. 
+
+- min_samples_split indicates the minimum number of samples required to split a leaf into different branches. 
+- min_samples_leaf indicates how many samples to fit in each 'leaf' or node in a decision tree. These are interpreted as a floating point percentage of how much of the training data is used as a minimum sample for the leaf. In other words, a min_samples_leaf value of 0.02 indicate that a minimum of 2% of the training sample must be categorized under a given leaf. 
+
+The best parameters were found to be:
+```
+Decision Tree Best Params:  {'min_samples_split': 2, 'min_samples_leaf': 0.07}
+```
+Decision tree regression provided the most interesting predictions. The most notable is that it correctly identified that no ties (WMargin = 0) occur in basketball. Another interesting result is that at its best hyperparameters, the decision tree regressor groups win margins into ~10 discrete categories rather than a smooth line shown in all of the linear models above. In doing so, it sacrifices some ability to pinpoint exactly what the point margin to be, and instead generalizes matchups to fit in a few categories. 
+
+## Betting Simulation
+
+Finally, the predictions of these models are tested against the Vegas betting lines with respect to the actual results. 
+
 ![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/bets_all.png)
 
+Some noteworthy results:
+- DTR vastly outperformed the other models. Its final Profit/Game ended up being $19.4! However, this comes with some caveats. 1. It performed significantly well on the 2017 tournament, coming ahead by 20 games out of 67, while it only came ahead by 6 games in the 2018 tournament. Its true predictive performance is yet to be measured.
+- LR and LSVR with finely tuned Elo Ratings performed 2nd and 3rd best respectively. These two models and the DTR model were the only models to outperform simply betting on the favorite to lost ATS. This may also speak to the predictive power of Elo Ratings by itself. 
+- The other linear models were not able to adjust very well given new features. LSVR with advanced stats was barely profitable, while LR with advanced stats actually finished at a loss. This could be due to the "feature overload" phenomena mentioned earlier, as well as overfitting from too many features in general.
 
 ## Conclusions
 ### Client Recommendations
