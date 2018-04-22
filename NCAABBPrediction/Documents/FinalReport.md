@@ -246,4 +246,21 @@ Some noteworthy results:
 ## Conclusions
 ### Client Recommendations
 
+#### On Betting On NCAA Basketball: Proceed With Caution!
+Although some models were shown to be profitable over two tournaments, the highly variant nature and small samples of NCAA Tournaments makes it hard to gauge the true performance of basketball predictions. Two different naive strategies (betting on favorite to win or lose ATS) were shown to be profitable in two different (regular season vs. 2 NCAA Tournaments). 
+
+#### Decision Tree Based Models Yielded The Most Profit Overall
+Even though it's difficult to conclusively gauge future predictivity from these models, it's still worth noting that DTR outperformed the other models by a considerable margin. This model sacrificed some accuracy over simplicity and it paid off in the betting simulations. By basing predictions off of decision rules, DTR is quite close to how basketball analysts generally come up with their own predictions. Moving forward, DTR might be the best algorithm for predicting future outcomes. 
+
+#### Identify Key Bets
+This model provides a basic framework for identifying an overall betting strategy. This is fine for clients with a lot of capital to play with but not all clients can afford to bet on every game. Using the data gathered from this model, one can simply find some common features among the bets that actually were profitable and place future bets that resemble those profiles.
+
 ### Future Work
+#### Confidence Based Betting
+As mentioned earlier, the profitability modeled in this analysis assumed a 1:1 payout. This is never the case as the casino usually takes a small cut. Thus, **the payout outlined above is more optimistic than in real life**. Further simulations would account for this by having a model bet more on predictions it's more confident about, and less (or not at all) on less confident bets. 
+
+#### Betting On Different Platforms
+The betting line used for comparison was an average across multiple platforms. It would be interesting to see which betting platforms are the most and least accurate. Using the models to exploit the less accurate betting platforms can increase the overall profitability of the models outlined above. 
+
+#### Decision Trees With Historical Features
+This analysis was done using statistical metrics that were calculated from box-scores. But, there are many dimensions that go on in a basketball game that can't be detected from box-scores. These include: recent injuries of players, how far teams travel to the game location, coaching ability, etc. All of these features above can definitely affect the outcomes of games, albeit they're hard to quantify. DTR in theory can bypass this and just estimate win margins based on past history from tournament matchups. 
