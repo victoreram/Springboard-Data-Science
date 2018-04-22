@@ -110,7 +110,7 @@ Then, given the betting line for the game, set a betting strategy. The first bet
 
 This time, betting for the favorite to lose against the spread in the NCAA Tournament was profitable. This is reasonable because upsets, or games where the underdog wins, are more frequent in the NCAA tournament. Applying the betting payout above, the most profitable strategy amounts to 100*(6 games ahead/134 games) ~ $4.45 profit/game.
 
-## Using Supervised Learning to Predict Margin of Victory
+## [Using Supervised Learning to Predict Margin of Victory](https://github.com/victoreram/Springboard-Data-Science/blob/master/NCAABBPrediction/MLAdvancedStats.ipynb)
 
 ### Baseline Model: Linear Regression With Elo Ratings
 The baseline model is a linear regression where X = Elo Rating difference between 2 teams, and y = margin of victory. This model is explained below. 
