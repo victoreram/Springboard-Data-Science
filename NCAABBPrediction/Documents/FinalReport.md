@@ -112,7 +112,10 @@ This time, betting for the favorite to lose against the spread in the NCAA Tourn
 
 ## Using Supervised Learning to Predict Margin of Victory
 
-### Main Feature: [Elo Ratings](https://en.wikipedia.org/wiki/Elo_rating_system)
+### Baseline Model: Linear Regression With Elo Ratings
+The baseline model is a linear regression where X = Elo Rating difference between 2 teams, and y = margin of victory. This model is explained below. 
+
+#### Main Feature: [Elo Ratings](https://en.wikipedia.org/wiki/Elo_rating_system)
 The main feature for this model are the Elo Ratings. Developed initially as a way to calculate skill levels for players in zero-sum games, Elo Ratings are a comprehensive metric that estimates a basketball team's strength. This model is similar to how [FiveThirtyEight](https://fivethirtyeight.com/features/how-we-calculate-nba-elo-ratings/) calculates their Elo Ratings. A team's Elo Rating is recalculated each game and takes into account:
 - the margin of victory/defeat
 - the strength of the teams facing each other 
@@ -147,10 +150,9 @@ It was found that the Elo Rating which minimized MSE were calculated with parame
 
 ![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/MSE_vs_K.png)
 
-
 #### Linear Regression With Optimal Elo Ratings
 
-The baseline supervised model is the linear regression model outlined above where feature column X = `SeasonEloDiff` calculated with the optimal parameters above, and y = margin of victory. This model is trained with the results from the 2003-2016 NCAA tournaments and tested with the 2017-2018 tournaments. The results of the regression model are shown below.
+The baseline supervised model is the linear regression model outlined above where feature column X = `SeasonEloDiff` calculated with the optimal parameters above, and y = margin of victory. This model is trained with the results from the 2003-2016 NCAA tournaments and tested with the 2017-2018 tournaments. X and y are mirrored, i.e. have symmetrical negative values, so that the model sees both winning and losing samples. The results of the regression model are shown below.
 
 ![Betting EloLR](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/mov_vs_elo.png)
 
@@ -160,11 +162,105 @@ Elo Ratings by themselves turn out to be a solid indicator of margin of victory.
 
 The baseline model was able to craft a more profitable betting strategy than simply betting for the favorite to beat or lose ATS. Coming ahead by 13 games out of 134, this amounts to a profit of $100*(13/134) = $9.70/game. Not bad!
 
-### Linear Regression With Elo Ratings And Advanced Stats
+### Feature Engineering: Augmenting the Baseline Model with Advanced Stats
 
-### Random Forests With Elo Ratings Adn Advanced Stats
+In addition to the Elo Ratings, advanced stats can be used to make a prediction between teams. Elo Ratings alone are a great estimator of a team's overall strength, but they don't show how teams of different profiles match up. For example, suppose two teams with roughly the same Elo Rating face each other. Team A however is prone to turning the ball over, while Team B specializes in exploiting that weakness. Using various advanced stats would in theory illuminate this matchup problem.
 
-## Evaluating Against Vegas Betting Line
+The advanced stats chosen for this project are chosen to show the various aspects of basketball. These are defined (from the NBA's [stat glossary](https://stats.nba.com/help/glossary/)):
+- **Assist Rate (AstR)**: The percentage of team possessions that end in assists. This describes how well a team passes the ball.
+- **Turnover Rate (TOR)**: The percentage of team possessions that end in a turnover. A high turnover rate means a team gives a lot of its offensive possessions to the other team. Teams that are good at taking care of the ball and maximizing the amount of possessions have a low turnover rate.
+- **Effective Field Goal Percentage (eFGP)**: Shooting percentage that accounts for the point value of the shot. A 3-point shot is worth more than a regular shot, so it's weighed more in this percentage. This stat describes how well a team shoots the ball.
+- **Free Throw Rate (FTAR)**: The rate at which a team takes free throw shots. This stat describes how well a team draws fouls and its affinity for getting to the free throw line, which is generally an efficient strategy in basketball.
+- **3-Point Rate (TPAR)**: The rate at which a team takes 3-point shots. The 3 point shot is one of the most efficient shots in basketball, so this stat describes how well a team chooses its shots.
+- **Rebound Percentage**: The percentage of available rebounds a team grabs. Rebounds are important for closing out a defensive possession (defensive rebound) or getting an extra offensive possession (offensive rebound). A high rebound percentage means a team is proficient in maximizing the amount of possessions it has and minimizing the other team's possessions.
+- **Possessions / Tempo**: The amount of possessions a team has per game. A team with a low tempo plays slow, and a team with a high tempo wants to push the pace. Slow teams lend itself to games with lower variance because they force less possessions in a game. Dominant slow teams are prone to upsets. By itself this isn't a good predictor, but it's an important part of a team's profile.
+- **Net Rating / Adjusted Net Rating (AdjNetRtg)**. The difference between the average points per possession one team scores (Offensive Rating) and the average points per possession it gives up (Defensive Rating). This is a stat describes how well a team's offense and defense performs overall. Raw Net Rating is purely point differential. The adjusted net rating used here is adjusted by a team's tempo, as well as how strong a team's opponent is (estimated by the difference in Elo Ratings).
+
+![Betting EloLR](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/stats_heatmap.png)
+
+Given these new features, X now has columns of the Elo Rating difference and the difference in advanced stats between two teams in each row. Because each of these statistics have various ranges, each statistic was scaled using Robust Scaler. This scaler yielded the most reliable results in part because it's able to handle outliers better than Standard SCaler. This new data is then implemented in the machine learning algorithms below.
+
+#### Linear Regression
+![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_lr_adv.png)
+
+Surprisingly, linear regression with these new advanced metrics performed *worse* than linear regression with just the difference in Elo Rating. This could be because the algorithm is facing "feature overload" and doesn't know how to deal with teams of different profiles beating each other. Examining the coefficients sheds some light on this:
+```
+{'AdjNetRtgdiff': array([ 4.6867032]),
+ 'AstRdiff': array([-0.75097755]),
+ 'FTARdiff': array([-1.13091026]),
+ 'Posdiff': array([-0.77905128]),
+ 'RPdiff': array([ 0.22327253]),
+ 'SeasonEloDiff': array([ 0.01703936]),
+ 'TORdiff': array([ 0.38684909]),
+ 'TPARdiff': array([ 0.12673679]),
+ 'eFGPdiff': array([-0.64045008])}
+```
+Basically, all of the stats chosen except for TO Rate are advantageous to have a larger number of. But, the coefficients from linear regression show that TO rate is positive, but Ast Rate, FTA Rate, TPA Rate, and eFG% are negative. This means that the model thinks that a team with a higher TO rate is generally advantageous, and having a lower Ast Rate, FTA Rate, TPA Rate, and eFG% is generally disadvantageous which is not the case. 
+
+
+#### Linear Support Vector Regressor (SVR)
+The next algorithm chosen to predict margin of victory is the linear support vector regressor. This was chosen primarily because of its versatility. It also provides a different model other than Linear Regression of computing a smooth regression line. Performing cross-validation using the two different models below showed an optimal C paremeter of 1.0.
+
+##### With Just Elo Ratings
+![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_svr_basic.png)
+
+LSVR was first applied under the same conditions as the baseline linear regression model: X is a single column that consists of just the difference in Elo Rating between two teams and y is the point margin. This is to serve as a baseline to see how much the addition of features affects the overall model. Linear Regression outperformed Linear SVR based on Pearson r (0.6 vs. 0.5).
+
+##### With Elo Ratings and Advanced Stats
+![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_svr_adv.png)
+
+LSVR was then applied with X containing Elo Ratings and Advanced Stats. The overall predictive power was boosted only slightly, with an improvement in r score by 0.1.
+
+#### Decision Tree Regressor
+![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_dtr.png)
+
+The last machine learning algorithm used involved decision trees. The main advantage of using decision trees is that it should be able to discover decision rules that are similar to the heuristics of examining how teams of different profiles match up. The main disadvantage for decision tree based models is they're prone to overfitting especially given many features. Usually it's recommended to perform dimensionality reduction in this case, but the training data is not particularly wide (n_samples >> n_features) so this isn't necessary.
+
+This model was cross-validated with the parameters:
+```python
+parameters = {'min_samples_split':np.arange(2,10), 
+              'min_samples_leaf':np.arange(0.01,0.08,0.01)}
+```
+These two parameters control the number of samples in a leaf mode in different ways. A small number for either of these parameters will make the model more prone to overfitting because it will overreact to anomalies within the data, such as upsets that are incredibly unlikely to occur again. Setting a number too high will prevent the model from learning from the data because it won't be able to differentiate between various scendarios. 
+
+- min_samples_split indicates the minimum number of samples required to split a leaf into different branches. 
+- min_samples_leaf indicates how many samples to fit in each 'leaf' or node in a decision tree. These are interpreted as a floating point percentage of how much of the training data is used as a minimum sample for the leaf. In other words, a min_samples_leaf value of 0.02 indicate that a minimum of 2% of the training sample must be categorized under a given leaf. 
+
+The best parameters were found to be:
+```
+Decision Tree Best Params:  {'min_samples_split': 2, 'min_samples_leaf': 0.07}
+```
+Decision tree regression provided the most interesting predictions. The most notable is that it correctly identified that no ties (WMargin = 0) occur in basketball. Another interesting result is that at its best hyperparameters, the decision tree regressor groups win margins into ~10 discrete categories rather than a smooth line shown in all of the linear models above. In doing so, it sacrifices some ability to pinpoint exactly what the point margin to be, and instead generalizes matchups to fit in a few categories. 
+
+## Betting Simulation
+
+Finally, the predictions of these models are tested against the Vegas betting lines with respect to the actual results. 
+
+![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/bets_all.png)
+
+Some noteworthy results:
+- DTR vastly outperformed the other models. Its final Profit/Game ended up being $19.4! However, this comes with some caveats. 1. It performed significantly well on the 2017 tournament, coming ahead by 20 games out of 67, while it only came ahead by 6 games in the 2018 tournament. Its true predictive performance is yet to be measured.
+- LR and LSVR with finely tuned Elo Ratings performed 2nd and 3rd best respectively. These two models and the DTR model were the only models to outperform simply betting on the favorite to lost ATS. This may also speak to the predictive power of Elo Ratings by itself. 
+- The other linear models were not able to adjust very well given new features. LSVR with advanced stats was barely profitable, while LR with advanced stats actually finished at a loss. This could be due to the "feature overload" phenomena mentioned earlier, as well as overfitting from too many features in general.
 
 ## Conclusions
+### Client Recommendations
 
+#### On Betting On NCAA Basketball: Proceed With Caution!
+Although some models were shown to be profitable over two tournaments, the highly variant nature and small samples of NCAA Tournaments makes it hard to gauge the true performance of basketball predictions. Two different naive strategies (betting on favorite to win or lose ATS) were shown to be profitable in two different (regular season vs. 2 NCAA Tournaments). 
+
+#### Decision Tree Based Models Yielded The Most Profit Overall
+Even though it's difficult to conclusively gauge future predictivity from these models, it's still worth noting that DTR outperformed the other models by a considerable margin. This model sacrificed some accuracy over simplicity and it paid off in the betting simulations. By basing predictions off of decision rules, DTR is quite close to how basketball analysts generally come up with their own predictions. Moving forward, DTR might be the best algorithm for predicting future outcomes. 
+
+#### Identify Key Bets
+This model provides a basic framework for identifying an overall betting strategy. This is fine for clients with a lot of capital to play with but not all clients can afford to bet on every game. Using the data gathered from this model, one can simply find some common features among the bets that actually were profitable and place future bets that resemble those profiles.
+
+### Future Work
+#### Confidence Based Betting
+As mentioned earlier, the profitability modeled in this analysis assumed a 1:1 payout. This is never the case as the casino usually takes a small cut. Thus, **the payout outlined above is more optimistic than in real life**. Further simulations would account for this by having a model bet more on predictions it's more confident about, and less (or not at all) on less confident bets. 
+
+#### Betting On Different Platforms
+The betting line used for comparison was an average across multiple platforms. It would be interesting to see which betting platforms are the most and least accurate. Using the models to exploit the less accurate betting platforms can increase the overall profitability of the models outlined above. 
+
+#### Decision Trees With Historical Features
+This analysis was done using statistical metrics that were calculated from box-scores. But, there are many dimensions that go on in a basketball game that can't be detected from box-scores. These include: recent injuries of players, how far teams travel to the game location, coaching ability, etc. All of these features above can definitely affect the outcomes of games, albeit they're hard to quantify. DTR in theory can bypass this and just estimate win margins based on past history from tournament matchups. 
