@@ -200,9 +200,9 @@ Below is a snippet of the Mean Squared Errors for these X matrices.
 | Mean Squared Errors                | Scaled with respect to all team stats | Raw differences | Scaled with respect to tournament matchups | Reduced dimension |
 |------------------------------------|---------------------------------------|-----------------|--------------------------------------------|-------------------|
 | Linear Regression                  | 132.29                                | 133.06          | 131.36                                     | 146.94            |
-| Linear SVR                         | 128.47                                | 128.26          | 132.89                                    | 149.48            |
+| Linear SVR                         | 132.00                                | 127.13          | 132.77                                    | 149.58            |
 | Decision Tree (Default Parameters) | 269.55                                | 258.22          | 218.42                                     | 299.55            |
-| Decision Tree (With Grid Search)   | 130.83                                | 124.72          | 126.56                                     | 158.05            |
+| Decision Tree (With Grid Search)   | 127.46                               | 124.72          | 125.77                                     | 171.98           |
 
 
 Based on the MSEs, the reduced dimension X performed worse than the other versions. Linear SVR and a DTR with grid search performed best when taking just the raw differences of stats. Linear Regression and DTR with default parameters performed best when scaled with respect to tournament matchups. Linear Regression performed similarly between both scaled columns and the raw differences. DTR with just the default parameters performed the worst across all models. 
@@ -214,17 +214,17 @@ The following models below use the optimal X with respect to their model. So, Li
 
 Surprisingly, linear regression with these new advanced metrics performed *worse* than linear regression with just the difference in Elo Rating. This could be because the algorithm is facing "feature overload" and doesn't know how to deal with teams of different profiles beating each other. Examining the coefficients sheds some light on this:
 ```
-{'AdjNetRtgdiff': array([ 4.6867032]),
- 'AstRdiff': array([-0.75097755]),
- 'FTARdiff': array([-1.13091026]),
- 'Posdiff': array([-0.77905128]),
- 'RPdiff': array([ 0.22327253]),
- 'SeasonEloDiff': array([ 0.01703936]),
- 'TORdiff': array([ 0.38684909]),
- 'TPARdiff': array([ 0.12673679]),
- 'eFGPdiff': array([-0.64045008])}
+ {'FTARdiff': array([-1.06699827]), 
+ 'TORdiff': array([ 0.12606109]), 
+ 'NetRtgdiff': array([ 4.29862192]), 
+ 'AstRdiff': array([-0.70959121]), 
+ 'eFGPdiff': array([-0.4146554]), 
+ 'Posdiff': array([-0.22886451]), 
+ 'TPARdiff': array([ 0.07134274]), 
+ 'RPdiff': array([ 0.50623984]), 
+ 'SeasonEloDiff': array([ 5.54647749])}
 ```
-Basically, all of the stats chosen except for TO Rate are advantageous to have a larger number of. But, the coefficients from linear regression show that TO rate is positive, but Ast Rate, FTA Rate, TPA Rate, and eFG% are negative. This means that the model thinks that a team with a higher TO rate is generally advantageous, and having a lower Ast Rate, FTA Rate, TPA Rate, and eFG% is generally disadvantageous which is not the case. 
+Basically, all of the stats chosen except for TO Rate are intuitively more advantageous to have a larger number of. But, the coefficients from linear regression show that TO rate is positive, but Ast Rate, FTA Rate, TPA Rate, and eFG% are negative. This means that the model thinks that a team that turns it over more, and is less adept at passing, shooting, and at attempting free throws when everything else is kept neutral, is actually *better*. Anyone who knows anything about basketball knows that this is simply not the case!
 
 
 #### Linear Support Vector Regressor (SVR)
@@ -238,28 +238,82 @@ LSVR was first applied under the same conditions as the baseline linear regressi
 ##### With Elo Ratings and Advanced Stats
 ![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_svr_adv.png)
 
-LSVR was then applied with X containing Elo Ratings and Advanced Stats. The overall predictive power was boosted only slightly, with an improvement in r score by 0.1.
+LSVR was then applied with X containing Elo Ratings and Advanced Stats. The overall predictive power actually decreased as a result.  Below are the coefficients for this linear model:
+`
+ {'TPARdiff': array([-0.0418942]), 
+ 'AstRdiff': array([ 0.00359622]), 
+ 'eFGPdiff': array([ 0.04119783]), 
+ 'SeasonEloDiff': array([ 0.03140776]), 
+ 'FTARdiff': array([-0.04768954]), 
+ 'Posdiff': array([-0.12287782]), 
+ 'TORdiff': array([-0.0193573]), 
+ 'RPdiff': array([ 0.05547886]), 
+ 'AdjNetRtgdiff': array([ 0.23025069])}
+ `
+ The coefficients for LSVR are more intuitive for basketball. It correctly identifies that shooting and passing (albeit very slightly) are positive traits unlike LR's coefficients. 3-point and free throw rate are penalized slightly, while a team's tempo is heavily penalized. 
+ *Note that because raw SeasonEloDiff is typically on the scale of 10^1-10^2, the coefficients are much smaller than in LR. Given this adjustment, the low coefficient for SeasonEloDiff makes sense.*
+ 
+ ##### Why Do LR and LSVR Perform 'Worse' With More Features?
 
-#### Decision Tree Regressor
-![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_dtr.png)
+It's worth pointing out that one result of this analysis is that LR and LSVR have higher MSE with more features than their single-feature counterpart. It's possible that the stats are noisy when taking as an aggregate, and continuous model which is what these models attempt to do. However this type of modeling philosophy ignores some synergies they should be predictive. For example, a team who gets more possessions + is good at shooting complement each other because they maximize a given possession; being good at a different dimension of the game (like rebounding) doesn't synergize well with that advantage.  Thus, Decision Tree Regressors, which generate predictions in a different way, are also examined.
+
+#### Decision Tree Regressor (Default Parameters)
+![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_dtr_default.png)
 
 The last machine learning algorithm used involved decision trees. The main advantage of using decision trees is that it should be able to discover decision rules that are similar to the heuristics of examining how teams of different profiles match up. The main disadvantage for decision tree based models is they're prone to overfitting especially given many features. Usually it's recommended to perform dimensionality reduction in this case, but the training data is not particularly wide (n_samples >> n_features) so this isn't necessary.
 
+This model had the following feature importances:
+```
+ {'FTARdiff': 0.086559052276726167, 
+ 'TORdiff': 0.074324764739034169, 
+ 'NetRtgdiff': 0.12095003364701175, 
+ 'AstRdiff': 0.037002180988329567, 
+ 'eFGPdiff': 0.076194610261227175, 
+ 'Posdiff': 0.06921528359561871, 
+ 'TPARdiff': 0.059528168152850502, 
+ 'RPdiff': 0.072754663649136561, 
+ 'SeasonEloDiff': 0.40347124269006546}
+ ```
+ The two most important features are Net Rating and Season Elo, which incidentally are the two stats that measure overall team performance. The remaining stats in contrast measure a specific aspect of the game and are roughly of the same importance. Overall this model most values a team that is proficient at drawing fouls (FTAR), shooting (eFGP) and rebounding (RP). It weighs how well a team passes (AstR) and how many 3 pointers it chucks (TPAR) the least. 
+
+
+
+#### Decision Tree Regressor (With Grid Search)
+![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_dtr.png)
 This model was cross-validated with the parameters:
 ```python
-parameters = {'min_samples_split':np.arange(2,10), 
-              'min_samples_leaf':np.arange(0.01,0.08,0.01)}
+parameters = {'min_samples_split':np.arange(2,6), 
+              'min_samples_leaf':np.arange(1,6),
+             'max_depth':np.arange(2,6)}
 ```
-These two parameters control the number of samples in a leaf mode in different ways. A small number for either of these parameters will make the model more prone to overfitting because it will overreact to anomalies within the data, such as upsets that are incredibly unlikely to occur again. Setting a number too high will prevent the model from learning from the data because it won't be able to differentiate between various scendarios. 
+The first two parameters control the number of samples in a leaf mode in different ways. A small number for either of these parameters will make the model more prone to overfitting because it will overreact to anomalies within the data, such as upsets that are incredibly unlikely to occur again. Setting a number too high will prevent the model from learning from the data because it won't be able to differentiate between various scenarios. 
 
-- min_samples_split indicates the minimum number of samples required to split a leaf into different branches. 
-- min_samples_leaf indicates how many samples to fit in each 'leaf' or node in a decision tree. These are interpreted as a floating point percentage of how much of the training data is used as a minimum sample for the leaf. In other words, a min_samples_leaf value of 0.02 indicate that a minimum of 2% of the training sample must be categorized under a given leaf. 
+- `min_samples_split` indicates the minimum number of samples required to split a leaf into different branches. 
+- `min_samples_leaf` indicates how many samples to fit in each 'leaf' or node in a decision tree.
+- `max_depth` controls how many levels a given branch descends from a root of the decision tree.
 
 The best parameters were found to be:
 ```
-Decision Tree Best Params:  {'min_samples_split': 2, 'min_samples_leaf': 0.07}
+Decision Tree Best Params:  
+{'max_depth': 3, 
+'min_samples_leaf': 1, 
+'min_samples_split': 2}
 ```
-Decision tree regression provided the most interesting predictions. The most notable is that it correctly identified that no ties (WMargin = 0) occur in basketball. Another interesting result is that at its best hyperparameters, the decision tree regressor groups win margins into ~10 discrete categories rather than a smooth line shown in all of the linear models above. In doing so, it sacrifices some ability to pinpoint exactly what the point margin to be, and instead generalizes matchups to fit in a few categories. 
+The feature importances are shown below:
+```
+{'SeasonEloDiff': 0.8475705712849686, 
+'Posdiff': 0.0, 
+'TPARdiff': 0.0, 
+'RPdiff': 0.0, 
+'NetRtgdiff': 0.15242942871503135, 
+'FTARdiff': 0.0, 
+'eFGPdiff': 0.0, 
+'TORdiff': 0.0, 
+'AstRdiff': 0.0}
+```
+Interestingly, the grid search model only used the two stats that measure team performance (Elos and Net Rating) and ignored the rest. Due to requiring so many samples to fill a leaf node, this 
+
+This Decision Tree Regression model provided the most interesting predictions. The most notable is that it correctly identified that no ties (WMargin = 0) occur in basketball. Another interesting result is that at its best hyperparameters, the decision tree regressor groups win margins into ~10 discrete categories rather than a smooth line shown in all of the linear models above. In doing so, it sacrifices some ability to pinpoint exactly what the point margin to be, and instead generalizes matchups to fit in a few categories. 
 
 ## Betting Simulation
 
@@ -268,15 +322,16 @@ Finally, the predictions of these models are tested against the Vegas betting li
 ![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/bets_all.png)
 
 Some noteworthy results:
-- DTR vastly outperformed the other models. Its final Profit/Game ended up being $19.4! However, this comes with some caveats. 1. It performed significantly well on the 2017 tournament, coming ahead by 20 games out of 67, while it only came ahead by 6 games in the 2018 tournament. Its true predictive performance is yet to be measured.
-- LR and LSVR with finely tuned Elo Ratings performed 2nd and 3rd best respectively. These two models and the DTR model were the only models to outperform simply betting on the favorite to lost ATS. This may also speak to the predictive power of Elo Ratings by itself. 
-- The other linear models were not able to adjust very well given new features. LSVR with advanced stats was barely profitable, while LR with advanced stats actually finished at a loss. This could be due to the "feature overload" phenomena mentioned earlier, as well as overfitting from too many features in general.
+- DTR Default and DTR with Grid Search performed the best and 2nd best. DTR Default came ahead by 11 games from each tournament, yielding 22 games total. This yields a profit of $16.4 per game. DTR Grid Search follows along with $11.9/game. 
+- LR with Elo Ratings is tied with LSVR with Elo Rating Advanced Stats. This speaks to the predictive power of Elo Ratings by itself. LSVR took into account the statistical profiles with each team and it only managed to match the baseline model. 
+- LR with Elo Ratings and Advanced Stats ended at a loss. This result may be surprising at first, but recall that its coefficients were inconsistent with basketball intuition and are likely the reason for this poor performance. 
+
 
 ## Conclusions
 ### Client Recommendations
 
-#### On Betting On NCAA Basketball: Proceed With Caution!
-Although some models were shown to be profitable over two tournaments, the highly variant nature and small samples of NCAA Tournaments makes it hard to gauge the true performance of basketball predictions. Two different naive strategies (betting on favorite to win or lose ATS) were shown to be profitable in two different (regular season vs. 2 NCAA Tournaments). 
+#### Regression Models are Generally Profitable In The Long Run
+Most of the regression models tested in this project were profitable over the course of betting every game in the last two tournaments.
 
 #### Decision Tree Based Models Yielded The Most Profit Overall
 Even though it's difficult to conclusively gauge future predictivity from these models, it's still worth noting that DTR outperformed the other models by a considerable margin. This model sacrificed some accuracy over simplicity and it paid off in the betting simulations. By basing predictions off of decision rules, DTR is quite close to how basketball analysts generally come up with their own predictions. Moving forward, DTR might be the best algorithm for predicting future outcomes. 
