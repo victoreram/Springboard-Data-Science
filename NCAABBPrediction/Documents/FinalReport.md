@@ -146,9 +146,15 @@ The range of K and H values observed for tuning were from 20-80 and 100-150 resp
 4. Test this model on the 2017-2018 tournaments and calculate the Mean Squared Error (MSE).
 5. Choose the optimal K and H as the model which minimizes MSE. 
 
+MSE is the primary estimator used for evaluating how well the predicted win margin is from the actual win margin. MSE was chosen because it's the standard for measuring regression models and it measures how close predictions are to the actual result. MSE is not the way to measure model performances as these models are also evaluated as a betting strategy.
+
 It was found that the Elo Rating which minimized MSE were calculated with parameters K = 65 and H = 130, as shown below. H did not affect the MSE that much. Only the K value with the optimal H value is plotted below. 
 
 ![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/MSE_vs_K.png)
+
+*NOTE: The MSE's above are with a scaled y_preds, which was found to not be necessary later on. The raw y_pred yields an MSE of 124.62*
+
+For reference, the using y_pred as the average line (`lineavg`) yields a MSE of 124.57. 
 
 #### Linear Regression With Optimal Elo Ratings
 
@@ -178,9 +184,32 @@ The advanced stats chosen for this project are chosen to show the various aspect
 
 ![Betting EloLR](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/stats_heatmap.png)
 
-Given these new features, X now has columns of the Elo Rating difference and the difference in advanced stats between two teams in each row. Because each of these statistics have various ranges, each statistic was scaled using Robust Scaler. This scaler yielded the most reliable results in part because it's able to handle outliers better than Standard SCaler. This new data is then implemented in the machine learning algorithms below.
+Given these new features, X now has columns of the Elo Rating difference and the difference in advanced stats between two teams in each row. 
 
-#### Linear Regression
+#### Scaling and Dimensionality Reduction
+
+In an attempt to see how the model reacts to these added features, each machine learning algorithm was run under 4 different versions of this new X matrix. These 4 X matrices are the following:
+
+1. The scaled difference between Elo Ratings + Advanced Stats, but with the scaling done with respect to a unified stat ledger for all teams. This was the first approach and was since replaced by the following 3 X matrices.
+2. The raw difference between Elo Ratings + Advanced Stats of the two teams facing off.
+3. The scaled difference between Elo Ratings + Advanced Stats of the two teams facing off. The scaler chosen was Standard Scaler 
+4. The scaled difference between Elo Ratings + Advanced Stats that is reduced to 3 dimensions using PCA of the two teams facing off.
+
+Below is a snippet of the Mean Squared Errors for these X matrices.
+
+| Mean Squared Errors                | Scaled with respect to all team stats | Raw differences | Scaled with respect to tournament matchups | Reduced dimension |
+|------------------------------------|---------------------------------------|-----------------|--------------------------------------------|-------------------|
+| Linear Regression                  | 132.29                                | 133.06          | 131.36                                     | 146.94            |
+| Linear SVR                         | 128.47                                | 128.26          | 132.89                                    | 149.48            |
+| Decision Tree (Default Parameters) | 269.55                                | 258.22          | 218.42                                     | 299.55            |
+| Decision Tree (With Grid Search)   | 130.83                                | 124.72          | 126.56                                     | 158.05            |
+
+
+Based on the MSEs, the reduced dimension X performed worse than the other versions. Linear SVR and a DTR with grid search performed best when taking just the raw differences of stats. Linear Regression and DTR with default parameters performed best when scaled with respect to tournament matchups. Linear Regression performed similarly between both scaled columns and the raw differences. DTR with just the default parameters performed the worst across all models. 
+
+The following models below use the optimal X with respect to their model. So, Linear SVR and DTR default results use X with raw differences while LR and DTR with grid search results use X with stats with respect to tournament matchups. 
+
+### Linear Regression With Advanced Stats
 ![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_lr_adv.png)
 
 Surprisingly, linear regression with these new advanced metrics performed *worse* than linear regression with just the difference in Elo Rating. This could be because the algorithm is facing "feature overload" and doesn't know how to deal with teams of different profiles beating each other. Examining the coefficients sheds some light on this:
