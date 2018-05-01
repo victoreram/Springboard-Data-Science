@@ -239,7 +239,8 @@ LSVR was first applied under the same conditions as the baseline linear regressi
 ![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_svr_adv.png)
 
 LSVR was then applied with X containing Elo Ratings and Advanced Stats. The overall predictive power actually decreased as a result.  Below are the coefficients for this linear model:
-`
+
+```
  {'TPARdiff': array([-0.0418942]), 
  'AstRdiff': array([ 0.00359622]), 
  'eFGPdiff': array([ 0.04119783]), 
@@ -249,7 +250,8 @@ LSVR was then applied with X containing Elo Ratings and Advanced Stats. The over
  'TORdiff': array([-0.0193573]), 
  'RPdiff': array([ 0.05547886]), 
  'AdjNetRtgdiff': array([ 0.23025069])}
- `
+ ```
+ 
  The coefficients for LSVR are more intuitive for basketball. It correctly identifies that shooting and passing (albeit very slightly) are positive traits unlike LR's coefficients. 3-point and free throw rate are penalized slightly, while a team's tempo is heavily penalized. 
  *Note that because raw SeasonEloDiff is typically on the scale of 10^1-10^2, the coefficients are much smaller than in LR. Given this adjustment, the low coefficient for SeasonEloDiff makes sense.*
  
