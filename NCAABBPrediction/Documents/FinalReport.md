@@ -17,12 +17,12 @@ Resources: [1](https://www.oddsshark.com/sports-betting/point-spread-betting)
 [2](https://www.pinnacle.com/en/betting-articles/Basketball/Basketball-Bet-Types-Explained/HST2G2NVF267NTS3) (See Handicap Betting)
 [3](https://www.quora.com/What-does-covering-the-spread-mean-in-sports-betting) The convention used in the Spurs/Lakers example is flipped in this case. Here, favored teams have positive point spreads.
 
-Suppose two teams play each other, Team A and Team B. Team A is perceived to be stronger than Team B. Oddsmakers will attempt to gauge how much stronger Team A is than Team B by setting how many points Team A is favored to win over Team B. This estimation of how many points Team A is favored by is the "Point spread", or betting line.
+Suppose two teams play each other, Team A and Team B. Team A is perceived to be stronger than Team B. Oddsmakers will attempt to gauge how much stronger Team A is than Team B by setting how many points Team A is favored to win over Team B. This estimation of how many points Team A is favored by is the "point spread", or betting line.
 
-Now suppose that the oddsmakers set the betting line to be +5.5 for Team A, which is equivalent to -5.5 for Team B. This means that the oddsmakers value that Team A is a 5 point favorite over Team B. If one bets that Team A will win by 5 points or less, or for Team B to win, he is betting for Team A, the favorite, to "lose against the spread (ATS)". This is also referred to Team B beating the spread. If another bets that Team A will win by more than 5 points, he is betting for the favorite to "win against the spread". This time, it's Team A beating the spread. 
+Now suppose that the oddsmakers set the betting line to be +5.5 for Team A, which is equivalent to -5.5 for Team B. This means that the oddsmakers value that Team A is a 5 point favorite over Team B. If one bets that Team A will win by 5 points or less, or for Team B to win, he is betting for Team A, the favorite, to lose "against the spread" (ATS). This is also referred to Team B beating the spread. If another bets that Team A will win by more than 5 points, he is betting for the favorite to "win against the spread". This time, it's Team A beating the spread. 
 
 #### Convention
-For here on out, all actions against the spread are by the favorite team. So, the plots labeled are with the favorite winning or losing against the spread. 
+From here on out, all actions against the spread are by the favorite team. So, the plots labeled are with the favorite winning or losing against the spread. 
 
 ### Objective: Create a Model That Suggests a Profitable Betting Strategy
 The goal of this project is to create a model that can:
@@ -54,7 +54,7 @@ The basketball data used for this analysis comes from the 2018 March Madness com
 This dataset contains historical betting lines for many sports including NCAA basketball. There's a spreadsheet for each season and they're named with the convention 'ncaabb{last 2 numbers of season}.csv' For example, the betting odds for the 2017-2018 season is 'ncaabb17.csv'. Each spreadsheet contains the following features:
 - Each row is a game. Typically there are ~4000 rows per season.
 - There first 5 columns are columns about the game itself, such as the home/road team (home, road), the home/road team score (hscore, rscore) and date.
-- The rest of the columns contain information about the betting lines. These have the prefix of "line-" and are followed by the platform that provides these lines. For example, the betting line for the "Fox" platform would be listed under the "linefox". These values are often rounded to the nearest 0.5, but if they're not, they're wrangled in one of the data cleaning steps.
+- The rest of the columns contain information about the betting lines. These have the prefix of "line-" and are followed by the platform that provides these lines. For example, the betting line for the "Fox" platform would be listed under the "linefox". These values are often rounded to the nearest 0.5.
 
 ## Data Wrangling
 
@@ -96,7 +96,7 @@ Plotting betting line vs. actual margin of victory shows a correlation (r=0.6) w
 Simply betting for the favorite to beat the spread was profitable 2017-18 regular season. However, this comes with some caveats. 
 
 1. This is only for one regular season. Other seasons may show different results.
-2. Given the high volume of games, this is not all that profitable of a strategy. Suppose you bet $100 on each game using this strategy and comes ahead by 86 games out of 4066. Suppose also that the casino is generous and give a 1:1 payout, i.e. you lose $100 if you lose the bet and the casino give you $100 in addition to the $100 you put in if you win (which is never the case!). This betting strategy amounts to a paltry ~$2.11 profit per game!
+2. Given the high volume of games, this is not all that profitable of a strategy. Suppose you bet $100 on each game using this strategy and come ahead by 86 games out of 4066. Suppose also that the casino is generous and give a 1:1 payout, i.e. you lose $100 if you lose the bet and the casino give you $100 in addition to the $100 you put in if you win (which is never the case!). This betting strategy amounts to a paltry ~$2.11 profit per game!
 
 ## Blind Model - Evaluating on 2017-2018 Tournaments
 
@@ -113,7 +113,7 @@ This time, betting for the favorite to lose against the spread in the NCAA Tourn
 ## [Using Supervised Learning to Predict Margin of Victory](https://github.com/victoreram/Springboard-Data-Science/blob/master/NCAABBPrediction/MLAdvancedStats.ipynb)
 
 ### Baseline Model: Linear Regression With Elo Ratings
-The baseline model is a linear regression where X = Elo Rating difference between 2 teams, and y = margin of victory. This model is explained below. 
+The baseline model is a linear regression where X = Elo Rating difference between 2 teams, and y = margin of victory. 
 
 #### Main Feature: [Elo Ratings](https://en.wikipedia.org/wiki/Elo_rating_system)
 The main feature for this model are the Elo Ratings. Developed initially as a way to calculate skill levels for players in zero-sum games, Elo Ratings are a comprehensive metric that estimates a basketball team's strength. This model is similar to how [FiveThirtyEight](https://fivethirtyeight.com/features/how-we-calculate-nba-elo-ratings/) calculates their Elo Ratings. A team's Elo Rating is recalculated each game and takes into account:
@@ -146,7 +146,7 @@ The range of K and H values observed for tuning were from 20-80 and 100-150 resp
 4. Test this model on the 2017-2018 tournaments and calculate the Mean Squared Error (MSE).
 5. Choose the optimal K and H as the model which minimizes MSE. 
 
-MSE is the primary estimator used for evaluating how well the predicted win margin is from the actual win margin. MSE was chosen because it's the standard for measuring regression models and it measures how close predictions are to the actual result. MSE is not the way to measure model performances as these models are also evaluated as a betting strategy.
+MSE is the primary estimator used for evaluating how well the predicted win margin is from the actual win margin. MSE was chosen because it's the standard for measuring regression models and it measures how close predictions are to the actual result. MSE is not the only way to measure model performances as these models are also evaluated as a betting strategy.
 
 It was found that the Elo Rating which minimized MSE were calculated with parameters K = 65 and H = 130, as shown below. H did not affect the MSE that much. Only the K value with the optimal H value is plotted below. 
 
@@ -170,7 +170,7 @@ The baseline model was able to craft a more profitable betting strategy than sim
 
 ### Feature Engineering: Augmenting the Baseline Model with Advanced Stats
 
-In addition to the Elo Ratings, advanced stats can be used to make a prediction between teams. Elo Ratings alone are a great estimator of a team's overall strength, but they don't show how teams of different profiles match up. For example, suppose two teams with roughly the same Elo Rating face each other. Team A however is prone to turning the ball over, while Team B specializes in exploiting that weakness. Using various advanced stats would in theory illuminate this matchup problem.
+In addition to the Elo Ratings, advanced stats can be used to make a prediction between teams. Elo Ratings alone are a great estimator of a team's overall strength, but they don't show *how* teams of different profiles match up. For example, suppose two teams with roughly the same Elo Rating face each other. Team A however is prone to turning the ball over, while Team B specializes in exploiting that weakness. Using various advanced stats would in theory illuminate this matchup problem.
 
 The advanced stats chosen for this project are chosen to show the various aspects of basketball. These are defined (from the NBA's [stat glossary](https://stats.nba.com/help/glossary/)):
 - **Assist Rate (AstR)**: The percentage of team possessions that end in assists. This describes how well a team passes the ball.
@@ -252,12 +252,14 @@ LSVR was then applied with X containing Elo Ratings and Advanced Stats. The over
  'AdjNetRtgdiff': array([ 0.23025069])}
  ```
  
- The coefficients for LSVR are more intuitive for basketball. It correctly identifies that shooting and passing (albeit very slightly) are positive traits unlike LR's coefficients. 3-point and free throw rate are penalized slightly, while a team's tempo is heavily penalized. 
+ The coefficients for LSVR are more intuitive for basketball than the coefficients for LR. It correctly identifies that shooting and passing (albeit very slightly) are positive traits unlike LR's coefficients. 3-point and free throw rate are penalized slightly, while a team's tempo is heavily penalized. 
  *Note that because raw SeasonEloDiff is typically on the scale of 10^1-10^2, the coefficients are much smaller than in LR. Given this adjustment, the low coefficient for SeasonEloDiff makes sense.*
  
  ##### Why Do LR and LSVR Perform 'Worse' With More Features?
 
-It's worth pointing out that one result of this analysis is that LR and LSVR have higher MSE with more features than their single-feature counterpart. It's possible that the stats are noisy when taking as an aggregate, and continuous model which is what these models attempt to do. However this type of modeling philosophy ignores some synergies they should be predictive. For example, a team who gets more possessions + is good at shooting complement each other because they maximize a given possession; being good at a different dimension of the game (like rebounding) doesn't synergize well with that advantage.  Thus, Decision Tree Regressors, which generate predictions in a different way, are also examined.
+It's worth pointing out that one result of this analysis is that LR and LSVR have higher MSE with more features than their single-feature counterpart. It's possible that the stats are noisy when taking as an aggregate, and continuous model which is what these models attempt to do. 
+
+However, basketball is not played in a vacuum, or along a continuous spectrum. The linear models above are good at generally predicting outcomes, but is unable to identify how teams matchup. This is why using just one finely tuned feature that already holistically describes team strength works best for these models. The drawback is this type of modeling philosophy ignores some synergies that should be predictive. For example, a team who gets more possessions + is good at shooting complement each other because they maximize a given possession; being good at a different dimension of the game (like rebounding) doesn't synergize well with that advantage.  Thus, Decision Tree Regressors, which generate predictions in a different way, are also examined.
 
 #### Decision Tree Regressor (Default Parameters)
 ![MSE vs K](https://raw.githubusercontent.com/victoreram/Springboard-Data-Science/master/NCAABBPrediction/Documents/preds_dtr_default.png)
@@ -313,9 +315,8 @@ The feature importances are shown below:
 'TORdiff': 0.0, 
 'AstRdiff': 0.0}
 ```
-Interestingly, the grid search model only used the two stats that measure team performance (Elos and Net Rating) and ignored the rest. Due to requiring so many samples to fill a leaf node, this 
 
-This Decision Tree Regression model provided the most interesting predictions. The most notable is that it correctly identified that no ties (WMargin = 0) occur in basketball. Another interesting result is that at its best hyperparameters, the decision tree regressor groups win margins into ~10 discrete categories rather than a smooth line shown in all of the linear models above. In doing so, it sacrifices some ability to pinpoint exactly what the point margin to be, and instead generalizes matchups to fit in a few categories. 
+This Decision Tree Regression model provided the most interesting predictions. The grid search model also only used the two stats that measure team performance (Elos and Net Rating) and ignored the rest. The most notable is that it correctly identified that no ties (WMargin = 0) occur in basketball. Another interesting result is that at its best hyperparameters, the decision tree regressor groups win margins into a few discrete categories rather than a smooth line shown in all of the linear models above. In doing so, it sacrifices some ability to pinpoint exactly what the point margin to be, and instead generalizes matchups to fit in a few categories. 
 
 ## Betting Simulation
 
@@ -332,14 +333,14 @@ Some noteworthy results:
 ## Conclusions
 ### Client Recommendations
 
-#### Regression Models are Generally Profitable In The Long Run
-Most of the regression models tested in this project were profitable over the course of betting every game in the last two tournaments.
+#### A Simple, Finely Tuned Linear Model Is Generally "Good Enough"
+Despite being used as a baseline model, the Linear Regression with finely tuned Elo Ratings actually performed better than a Linear Regression with more features. Adding advanced stat features to Linear SVR improved its performance on the betting simulation but did not improve in traditional regression evaluation metrics such as R and MSE. For clients looking for a safe approach, this analysis suggests that a simple linear model is good enough to make less risky profitable predictions.
 
-#### Decision Tree Based Models Yielded The Most Profit Overall
-Even though it's difficult to conclusively gauge future predictivity from these models, it's still worth noting that DTR outperformed the other models by a considerable margin. This model sacrificed some accuracy over simplicity and it paid off in the betting simulations. By basing predictions off of decision rules, DTR is quite close to how basketball analysts generally come up with their own predictions. Moving forward, DTR might be the best algorithm for predicting future outcomes. 
+#### Decision Tree Based Models Are Able To Go Beyond General Predictions
+DTR outperformed the other models by a considerable margin on the betting simulations despite having worse MSE and R values. By basing predictions off of decision rules, DTR is quite close to how basketball analysts generally come up with their own predictions. Moving forward, DTR might be the best algorithm for developing a higher risk but more profitable betting strategy. 
 
 #### Identify Key Bets
-This model provides a basic framework for identifying an overall betting strategy. This is fine for clients with a lot of capital to play with but not all clients can afford to bet on every game. Using the data gathered from this model, one can simply find some common features among the bets that actually were profitable and place future bets that resemble those profiles.
+This model provides a basic framework for identifying an overall betting strategy. This is fine for clients with a lot of capital to play with but not all clients can afford to bet on every game. Using the data gathered from DTR, one can simply find some common features among the bets that actually were profitable and place future bets that resemble those profiles.
 
 ### Future Work
 #### Confidence Based Betting
